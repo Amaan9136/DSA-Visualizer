@@ -1,0 +1,40 @@
+/* ============================= PLAYBACK CONTROLS ============================= */
+import { rebuildFrames } from './algo_switch.js';
+import { state } from './state.js';
+import { renderFrame } from './visualization_render.js';
+
+function goTo(i){
+  state.idx = Math.max(0, Math.min(state.frames.length-1, i));
+  renderFrame();
+}
+function stepNext(){
+  if(state.idx>=state.frames.length-1){ pause(); return; }
+  goTo(state.idx+1);
+}
+function stepPrev(){ pause(); goTo(state.idx-1); }
+
+function play(){
+  if(state.idx>=state.frames.length-1) goTo(0);
+  state.playing = true;
+  document.getElementById('playIcon').innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+  document.getElementById('playLabel').textContent = 'Pause';
+  const speed = document.getElementById('speedSlider').value;
+  const delay = 850 - speed*75;
+  state.timer = setInterval(()=>{
+    if(state.idx>=state.frames.length-1){ pause(); return; }
+    stepNext();
+  }, Math.max(60,delay));
+}
+function pause(){
+  state.playing=false;
+  clearInterval(state.timer);
+  document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+  document.getElementById('playLabel').textContent = 'Play';
+}
+document.getElementById('btnPlay').onclick = ()=> state.playing ? pause() : play();
+document.getElementById('btnNext').onclick = ()=>{ pause(); stepNext(); };
+document.getElementById('btnPrev').onclick = stepPrev;
+document.getElementById('btnReset').onclick = ()=>{ pause(); rebuildFrames(); };
+document.getElementById('speedSlider').oninput = ()=>{ if(state.playing){ pause(); play(); } };
+
+export { goTo, stepNext, stepPrev, play, pause };
