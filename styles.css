@@ -34,7 +34,7 @@
   .nav-item{color:var(--text-dim); cursor:pointer; transition:.12s; border-left:2px solid transparent;}
   .nav-item:hover{color:var(--text); background:var(--panel2);}
   .nav-item.active{color:var(--accent2); border-left-color:var(--accent2); background:var(--panel2); font-weight:600;}
-  .cat-head{color:var(--text-dim); cursor:pointer; user-select:none;}
+  .cat-head{color:#fff; cursor:pointer; user-select:none;}
   .bar{transition:height .28s cubic-bezier(.4,0,.2,1), background-color .2s ease, transform .2s ease;}
   .pyline{display:block; padding:0 12px; border-left:3px solid transparent;}
   .pyline.active{background:rgba(124,155,255,.14); border-left-color:var(--accent2);}
@@ -43,3 +43,7 @@
   @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
   .badge{font-size:10px; letter-spacing:.05em; padding:2px 8px; border-radius:99px; border:1px solid var(--border); color:var(--text-dim);}
   .soon{opacity:.4; cursor:not-allowed !important;}
+  .iter-row{border:1px solid transparent; cursor:pointer; transition:.12s;}
+  .iter-row:hover{background:var(--panel2); border-color:var(--border);}
+  .iter-row.active{background:rgba(124,155,255,.14); border-color:var(--accent2);}
+  .iter-chip{font-size:10.5px; padding:1px 7px; border-radius:99px; border:1px solid var(--border); background:var(--panel2); color:var(--text-dim);}

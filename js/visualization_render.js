@@ -2,6 +2,7 @@
 import { CATALOG } from './algorithm_catalog.js';
 import { renderGraphFrame } from './graph_render.js';
 import { renderHashTableFrame } from './hash_table_render.js';
+import { syncActiveStep } from './iteration_modal.js';
 import { renderLinkedListFrame } from './linked_list_render.js';
 import { renderQueueFrame } from './queue_render.js';
 import { renderStackFrame } from './stack_render.js';
@@ -91,6 +92,7 @@ function renderFrame(){
 
   document.getElementById('btnPrev').disabled = state.idx===0;
   document.getElementById('btnNext').disabled = state.idx===state.frames.length-1;
+  syncActiveStep();
 }
 
 export { renderBarsFrame, renderFrame };

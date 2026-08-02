@@ -23,6 +23,7 @@ import { renderPanelContent } from './js/panel_render.js';
 import './js/visualization_render.js';
 import { pause } from './js/playback_controls.js';
 import { rebuildFrames } from './js/algo_switch.js';
+import './js/iteration_modal.js';
 
 /* ============================= TABS ============================= */
 document.querySelectorAll('.tab').forEach(t=>{
