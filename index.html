@@ -58,7 +58,6 @@
             <p id="algoSub" class="text-[12px]" style="color:var(--text-dim)">Sorting · comparison-based</p>
           </div>
           <div class="flex items-center gap-2 text-[12px]" style="color:var(--text-dim)">
-            <button id="btnViewIteration" class="btn rounded-md px-2.5 py-1 text-[11.5px]" title="View all steps">View Iteration</button>
             <span id="frameCounter">Step 0 / 0</span>
           </div>
         </div>
@@ -121,6 +120,7 @@
     <aside class="glass w-[400px] shrink-0 hidden xl:flex flex-col min-h-0">
       <div class="flex text-[13px] shrink-0 overflow-x-auto" id="tabBar">
         <div class="tab active px-3 py-2.5 shrink-0" data-tab="explain">Explanation</div>
+        <div class="tab px-3 py-2.5 shrink-0" data-tab="iteration">Iteration</div>
         <div class="tab px-3 py-2.5 shrink-0" data-tab="pseudo">Pseudocode</div>
         <div class="tab px-3 py-2.5 shrink-0" data-tab="python">Python</div>
         <div class="tab px-3 py-2.5 shrink-0" data-tab="complexity">Complexity</div>
@@ -128,6 +128,10 @@
 
       <div class="flex-1 min-h-0 overflow-y-auto">
         <div id="tab-explain" class="p-4 text-[13px] leading-relaxed fade-in"></div>
+        <div id="tab-iteration" class="hidden p-2 text-[13px] leading-relaxed">
+          <div class="px-2 py-1 text-[11px] font-mono" id="iterationMeta" style="color:var(--text-dim)"></div>
+          <div id="iterationStepsList"></div>
+        </div>
         <div id="tab-pseudo" class="p-4 text-[13px] leading-relaxed font-mono hidden whitespace-pre-wrap"></div>
         <div id="tab-python" class="hidden h-full flex flex-col">
           <div class="flex items-center gap-1.5 px-3 py-2 shrink-0" style="border-bottom:1px solid var(--border)">
@@ -141,22 +145,6 @@
         <div id="tab-complexity" class="p-4 text-[13px] leading-relaxed hidden"></div>
       </div>
     </aside>
-  </div>
-</div>
-
-<div id="iterationModal" class="fixed inset-0 z-20 hidden items-center justify-center" style="background:rgba(0,0,0,.55)">
-  <div class="glass rounded-xl w-full max-w-md mx-4 flex flex-col" style="max-height:80vh">
-    <div class="flex items-center justify-between p-3 shrink-0" style="border-bottom:1px solid var(--border)">
-      <div>
-        <div class="font-display font-bold text-[14.5px]" id="iterationModalTitle">Iteration Steps</div>
-        <div class="text-[11px] font-mono" id="iterationModalMeta" style="color:var(--text-dim)"></div>
-      </div>
-      <div class="flex items-center gap-2">
-        <button id="btnBreakdownToggle" class="btn rounded-md px-2.5 py-1 text-[11.5px]">Breakdown</button>
-        <button id="btnIterationClose" class="btn rounded-md px-2 py-1 text-[11.5px]">✕</button>
-      </div>
-    </div>
-    <div id="iterationStepsList" class="flex-1 min-h-0 overflow-y-auto p-2"></div>
   </div>
 </div>
 

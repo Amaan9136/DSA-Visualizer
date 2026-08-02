@@ -1,5 +1,6 @@
 /* ============================= PLAYBACK CONTROLS ============================= */
 import { rebuildFrames } from './algo_switch.js';
+import { switchToIterationTab, syncActiveStep } from './iteration_render.js';
 import { state } from './state.js';
 import { renderFrame } from './visualization_render.js';
 
@@ -16,6 +17,7 @@ function stepPrev(){ pause(); goTo(state.idx-1); }
 function play(){
   if(state.idx>=state.frames.length-1) goTo(0);
   state.playing = true;
+  switchToIterationTab();
   document.getElementById('playIcon').innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
   document.getElementById('playLabel').textContent = 'Pause';
   const speed = document.getElementById('speedSlider').value;
@@ -30,6 +32,7 @@ function pause(){
   clearInterval(state.timer);
   document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
   document.getElementById('playLabel').textContent = 'Play';
+  syncActiveStep();
 }
 document.getElementById('btnPlay').onclick = ()=> state.playing ? pause() : play();
 document.getElementById('btnNext').onclick = ()=>{ pause(); stepNext(); };

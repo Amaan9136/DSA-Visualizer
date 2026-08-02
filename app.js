@@ -23,16 +23,17 @@ import { renderPanelContent } from './js/panel_render.js';
 import './js/visualization_render.js';
 import { pause } from './js/playback_controls.js';
 import { rebuildFrames } from './js/algo_switch.js';
-import './js/iteration_modal.js';
+import { renderIterationTab } from './js/iteration_render.js';
 
 /* ============================= TABS ============================= */
 document.querySelectorAll('.tab').forEach(t=>{
   t.onclick = ()=>{
     document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
     t.classList.add('active');
-    ['explain','pseudo','python','complexity'].forEach(id=>{
+    ['explain','iteration','pseudo','python','complexity'].forEach(id=>{
       document.getElementById('tab-'+id).classList.toggle('hidden', id!==t.dataset.tab);
     });
+    if(t.dataset.tab==='iteration') renderIterationTab();
   };
 });
 
