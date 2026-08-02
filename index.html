@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algorithmica — Interactive DSA Visualizer</title>
+<link rel="stylesheet" href="tailwind.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d12; --panel:#12151c; --panel2:#171b24; --border:#232836;
+    --accent:#6ee7c2; --accent2:#7c9bff; --text:#e6e9f0; --text-dim:#8a91a3;
+    --warn:#f2c94c; --danger:#ff6b6b; --good:#6ee7c2;
+  }
+  html.light{
+    --bg:#f6f7fb; --panel:#ffffff; --panel2:#f0f1f6; --border:#e3e5ee;
+    --accent:#0f9d78; --accent2:#3b5bdb; --text:#151823; --text-dim:#6b7186;
+    --warn:#b8860b; --danger:#d64545; --good:#0f9d78;
+  }
+  *{box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:'Inter',sans-serif; margin:0; overflow:hidden; height:100vh;
+  }
+  .font-display{font-family:'Space Grotesk',sans-serif;}
+  .font-mono{font-family:'JetBrains Mono',monospace;}
+  ::-webkit-scrollbar{width:8px;height:8px;}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  .glass{background:var(--panel);border:1px solid var(--border);}
+  .glass2{background:var(--panel2);border:1px solid var(--border);}
+  .btn{
+    border:1px solid var(--border); background:var(--panel2); color:var(--text);
+    transition:all .15s ease; cursor:pointer;
+  }
+  .btn:hover{border-color:var(--accent2); color:var(--accent2);}
+  .btn:disabled{opacity:.35; cursor:not-allowed;}
+  .btn:disabled:hover{border-color:var(--border); color:var(--text);}
+  .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#0b0d12; border:none; font-weight:600;}
+  .btn-primary:hover{filter:brightness(1.08); color:#0b0d12;}
+  .tab{color:var(--text-dim); border-bottom:2px solid transparent; cursor:pointer; transition:.15s;}
+  .tab.active{color:var(--text); border-color:var(--accent2);}
+  .nav-item{color:var(--text-dim); cursor:pointer; transition:.12s; border-left:2px solid transparent;}
+  .nav-item:hover{color:var(--text); background:var(--panel2);}
+  .nav-item.active{color:var(--accent2); border-left-color:var(--accent2); background:var(--panel2); font-weight:600;}
+  .cat-head{color:var(--text-dim); cursor:pointer; user-select:none;}
+  .bar{transition:height .28s cubic-bezier(.4,0,.2,1), background-color .2s ease, transform .2s ease;}
+  .pyline{display:block; padding:0 12px; border-left:3px solid transparent;}
+  .pyline.active{background:rgba(124,155,255,.14); border-left-color:var(--accent2);}
+  input[type=range]{accent-color:var(--accent2);}
+  .fade-in{animation:fadein .25s ease;}
+  @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .badge{font-size:10px; letter-spacing:.05em; padding:2px 8px; border-radius:99px; border:1px solid var(--border); color:var(--text-dim);}
+  .soon{opacity:.4; cursor:not-allowed !important;}
+</style>
+</head>
+<body class="text-[14px]">
+
+<div class="h-screen w-screen flex flex-col">
+
+  <!-- HEADER -->
+  <header class="glass flex items-center gap-4 px-4 h-14 shrink-0 z-20">
+    <div class="flex items-center gap-2 shrink-0">
+      <div class="w-7 h-7 rounded-lg flex items-center justify-center font-display font-bold text-[15px]"
+           style="background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#0b0d12;">A</div>
+      <span class="font-display font-bold text-[15px] tracking-tight">Algorithmica</span>
+      <span class="badge hidden sm:inline">MILESTONE: SORTING</span>
+    </div>
+
+    <div class="flex-1 max-w-md relative hidden md:block">
+      <input id="searchInput" placeholder="Search algorithms…" autocomplete="off"
+        class="w-full glass2 rounded-lg pl-9 pr-3 py-1.5 text-[13px] outline-none focus:border-[var(--accent2)]" style="border:1px solid var(--border)"/>
+      <svg class="absolute left-2.5 top-2 w-4 h-4" style="color:var(--text-dim)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m1.85-5.65a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"/></svg>
+    </div>
+
+    <div class="flex-1"></div>
+
+    <button id="themeToggle" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0" title="Toggle theme">
+      <svg id="iconMoon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+    </button>
+    <a href="https://github.com" target="_blank" class="btn rounded-lg w-9 h-9 hidden sm:flex items-center justify-center shrink-0" title="GitHub">
+      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 .5C5.73.5.98 5.24.98 11.5c0 4.84 3.13 8.94 7.48 10.39.55.1.75-.24.75-.53 0-.26-.01-1.13-.01-2.05-3.04.66-3.68-1.3-3.68-1.3-.5-1.27-1.22-1.6-1.22-1.6-.99-.68.08-.67.08-.67 1.1.08 1.68 1.13 1.68 1.13.98 1.68 2.57 1.19 3.2.91.1-.71.38-1.19.7-1.46-2.43-.28-4.98-1.21-4.98-5.4 0-1.19.42-2.17 1.11-2.93-.11-.28-.48-1.4.1-2.9 0 0 .91-.29 2.98 1.12a10.4 10.4 0 015.42 0c2.07-1.41 2.98-1.12 2.98-1.12.58 1.5.21 2.62.1 2.9.69.76 1.11 1.74 1.11 2.93 0 4.2-2.56 5.12-5 5.39.39.34.74 1 .74 2.03 0 1.46-.01 2.64-.01 3 0 .29.2.63.76.52A10.51 10.51 0 0023.02 11.5C23.02 5.24 18.27.5 12 .5z"/></svg>
+    </a>
+  </header>
+
+  <div class="flex flex-1 min-h-0">
+
+    <!-- SIDEBAR -->
+    <aside class="glass w-60 shrink-0 overflow-y-auto py-3 hidden lg:block" id="sidebar"></aside>
+
+    <!-- MAIN -->
+    <main class="flex-1 min-w-0 flex flex-col">
+
+      <!-- Visualization area -->
+      <section class="flex-1 min-h-0 flex flex-col p-4 gap-3">
+
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h1 id="algoTitle" class="font-display font-bold text-xl leading-tight">Bubble Sort</h1>
+            <p id="algoSub" class="text-[12px]" style="color:var(--text-dim)">Sorting · comparison-based</p>
+          </div>
+          <div class="flex items-center gap-2 text-[12px]" style="color:var(--text-dim)">
+            <span id="frameCounter">Step 0 / 0</span>
+          </div>
+        </div>
+
+        <div class="glass rounded-xl flex-1 min-h-0 relative overflow-hidden">
+          <div id="canvasWrap" class="absolute inset-0 flex items-end justify-center gap-1 px-6 pb-6 pt-10"></div>
+          <div id="stepNote" class="absolute top-3 left-4 right-4 text-[12.5px] font-mono glass2 rounded-lg px-3 py-1.5 fade-in" style="color:var(--text-dim); display:none"></div>
+        </div>
+
+        <!-- CONTROLS -->
+        <div class="glass rounded-xl p-3 flex flex-col gap-2.5">
+          <div class="flex items-center gap-2 flex-wrap">
+            <button id="btnReset" class="btn rounded-md px-2.5 py-1.5" title="Reset"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></button>
+            <button id="btnPrev" class="btn rounded-md px-2.5 py-1.5" title="Previous step"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/></svg></button>
+            <button id="btnPlay" class="btn-primary rounded-md px-4 py-1.5 font-semibold flex items-center gap-1.5">
+              <svg id="playIcon" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              <span id="playLabel">Play</span>
+            </button>
+            <button id="btnNext" class="btn rounded-md px-2.5 py-1.5" title="Next step"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/></svg></button>
+
+            <div class="flex items-center gap-2 ml-1">
+              <span class="text-[11px]" style="color:var(--text-dim)">Speed</span>
+              <input id="speedSlider" type="range" min="1" max="10" value="6" class="w-20 h-1">
+            </div>
+
+            <div class="flex-1"></div>
+
+            <button id="btnRandom" class="btn rounded-md px-3 py-1.5 text-[12.5px]">Random Array</button>
+            <button id="btnCustomToggle" class="btn rounded-md px-3 py-1.5 text-[12.5px]">Custom Input</button>
+          </div>
+
+          <div id="customBar" class="hidden items-center gap-2">
+            <input id="customInput" placeholder="e.g. 5, 3, 8, 1, 9, 2" class="flex-1 glass2 rounded-md px-3 py-1.5 text-[13px] font-mono outline-none focus:border-[var(--accent2)]" style="border:1px solid var(--border)"/>
+            <button id="btnCustomApply" class="btn-primary rounded-md px-3 py-1.5 text-[12.5px] font-semibold">Apply</button>
+          </div>
+
+          <div id="targetBar" class="hidden items-center gap-2">
+            <span id="targetLabelText" class="text-[12px] shrink-0" style="color:var(--text-dim)">Search for:</span>
+            <input id="targetInput" type="number" placeholder="target value" class="w-32 glass2 rounded-md px-3 py-1.5 text-[13px] font-mono outline-none focus:border-[var(--accent2)]" style="border:1px solid var(--border)"/>
+            <button id="btnTargetApply" class="btn-primary rounded-md px-3 py-1.5 text-[12.5px] font-semibold">Search</button>
+            <span id="targetHint" class="text-[11px]" style="color:var(--text-dim)"></span>
+          </div>
+
+          <div id="graphBar" class="hidden items-center gap-2">
+            <span class="text-[12px] shrink-0" style="color:var(--text-dim)" id="graphStartLabel">Start node:</span>
+            <select id="startNodeSelect" class="glass2 rounded-md px-2 py-1.5 text-[13px] font-mono outline-none focus:border-[var(--accent2)]" style="border:1px solid var(--border)"></select>
+            <button id="btnNewGraph" class="btn rounded-md px-3 py-1.5 text-[12.5px]">New Random Graph</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="glass w-[400px] shrink-0 hidden xl:flex flex-col min-h-0">
+      <div class="flex text-[13px] shrink-0 overflow-x-auto" id="tabBar">
+        <div class="tab active px-3 py-2.5 shrink-0" data-tab="explain">Explanation</div>
+        <div class="tab px-3 py-2.5 shrink-0" data-tab="pseudo">Pseudocode</div>
+        <div class="tab px-3 py-2.5 shrink-0" data-tab="python">Python</div>
+        <div class="tab px-3 py-2.5 shrink-0" data-tab="complexity">Complexity</div>
+      </div>
+
+      <div class="flex-1 min-h-0 overflow-y-auto">
+        <div id="tab-explain" class="p-4 text-[13px] leading-relaxed fade-in"></div>
+        <div id="tab-pseudo" class="p-4 text-[13px] leading-relaxed font-mono hidden whitespace-pre-wrap"></div>
+        <div id="tab-python" class="hidden h-full flex flex-col">
+          <div class="flex items-center gap-1.5 px-3 py-2 shrink-0" style="border-bottom:1px solid var(--border)">
+            <button id="btnCopyPy" class="btn rounded px-2 py-1 text-[11px]">Copy</button>
+            <button id="btnDownloadPy" class="btn rounded px-2 py-1 text-[11px]">Download .py</button>
+            <div class="flex-1"></div>
+            <input id="pySearch" placeholder="find in code…" class="glass2 rounded px-2 py-1 text-[11px] w-28 outline-none" style="border:1px solid var(--border)">
+          </div>
+          <pre class="flex-1 overflow-auto m-0 !bg-transparent text-[12.5px]" style="background:transparent!important"><code id="pyCode" class="language-python"></code></pre>
+        </div>
+        <div id="tab-complexity" class="p-4 text-[13px] leading-relaxed hidden"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+/* ============================= THEME ============================= */
+const root = document.documentElement;
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.onclick = () => {
+  root.classList.toggle('dark');
+  root.classList.toggle('light', !root.classList.contains('dark'));
+};
+
+/* ============================= ALGORITHM DEFINITIONS ============================= */
+// Each algorithm produces an array of "frames". A frame:
+// { array, compare:[i,j], swap:[i,j], sorted:[...idx], pivot:idx, note, pyLine }
+
+function framesBubble(arr){
+  const a=[...arr], frames=[], n=a.length, sortedIdx=[];
+  frames.push({array:[...a], sorted:[...sortedIdx], note:"Initial array.", pyLine:1});
+  for(let i=0;i<n-1;i++){
+    let swapped=false;
+    for(let j=0;j<n-i-1;j++){
+      frames.push({array:[...a], compare:[j,j+1], sorted:[...sortedIdx], note:`Compare a[${j}] and a[${j+1}]`, pyLine:4});
+      if(a[j]>a[j+1]){
+        [a[j],a[j+1]]=[a[j+1],a[j]]; swapped=true;
+        frames.push({array:[...a], swap:[j,j+1], sorted:[...sortedIdx], note:`Swap: a[${j}] > a[${j+1}]`, pyLine:5});
+      }
+    }
+    sortedIdx.unshift(n-1-i);
+    frames.push({array:[...a], sorted:[...sortedIdx], note:`Pass ${i+1} complete — largest remaining bubbled to position ${n-1-i}.`, pyLine:2});
+    if(!swapped){ frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"No swaps made — array is sorted early.", pyLine:6}); break; }
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:6});
+  return frames;
+}
+
+function framesSelection(arr){
+  const a=[...arr], frames=[], n=a.length, sortedIdx=[];
+  frames.push({array:[...a], sorted:[...sortedIdx], note:"Initial array.", pyLine:1});
+  for(let i=0;i<n-1;i++){
+    let minIdx=i;
+    frames.push({array:[...a], compare:[i,minIdx], sorted:[...sortedIdx], note:`Assume a[${i}] is the minimum of the unsorted region.`, pyLine:3});
+    for(let j=i+1;j<n;j++){
+      frames.push({array:[...a], compare:[minIdx,j], sorted:[...sortedIdx], note:`Compare current min a[${minIdx}] with a[${j}]`, pyLine:5});
+      if(a[j]<a[minIdx]){ minIdx=j;
+        frames.push({array:[...a], compare:[minIdx,j], sorted:[...sortedIdx], note:`New minimum found at index ${minIdx}`, pyLine:6}); }
+    }
+    if(minIdx!==i){ [a[i],a[minIdx]]=[a[minIdx],a[i]];
+      frames.push({array:[...a], swap:[i,minIdx], sorted:[...sortedIdx], note:`Swap a[${i}] with minimum a[${minIdx}]`, pyLine:8}); }
+    sortedIdx.push(i);
+    frames.push({array:[...a], sorted:[...sortedIdx], note:`Index ${i} is now finalized.`, pyLine:8});
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:9});
+  return frames;
+}
+
+function framesInsertion(arr){
+  const a=[...arr], frames=[], n=a.length;
+  frames.push({array:[...a], sorted:[0], note:"First element is trivially sorted.", pyLine:1});
+  for(let i=1;i<n;i++){
+    let key=a[i], j=i-1;
+    frames.push({array:[...a], compare:[i], sorted:Array.from({length:i},(_,k)=>k), note:`Pick key = a[${i}] = ${key}`, pyLine:3});
+    while(j>=0 && a[j]>key){
+      a[j+1]=a[j];
+      frames.push({array:[...a], compare:[j,j+1], note:`Shift a[${j}] right (it's greater than key ${key})`, pyLine:6});
+      j--;
+    }
+    a[j+1]=key;
+    frames.push({array:[...a], swap:[j+1], sorted:Array.from({length:i+1},(_,k)=>k), note:`Insert key ${key} at index ${j+1}`, pyLine:7});
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:8});
+  return frames;
+}
+
+function framesMerge(arr){
+  const frames=[], a=[...arr];
+  frames.push({array:[...a], note:"Initial array.", pyLine:1});
+  function merge(lo,mid,hi){
+    let left=a.slice(lo,mid+1), right=a.slice(mid+1,hi+1);
+    let i=0,j=0,k=lo;
+    frames.push({array:[...a], compare:[lo,hi], note:`Merging subarrays [${lo}..${mid}] and [${mid+1}..${hi}]`, pyLine:14});
+    while(i<left.length && j<right.length){
+      frames.push({array:[...a], compare:[k], note:`Compare ${left[i]} and ${right[j]}`, pyLine:16});
+      if(left[i]<=right[j]){ a[k]=left[i]; i++; } else { a[k]=right[j]; j++; }
+      frames.push({array:[...a], swap:[k], note:`Place ${a[k]} at index ${k}`, pyLine:19});
+      k++;
+    }
+    while(i<left.length){ a[k]=left[i]; frames.push({array:[...a], swap:[k], note:`Copy remaining left element ${a[k]}`, pyLine:22}); i++; k++; }
+    while(j<right.length){ a[k]=right[j]; frames.push({array:[...a], swap:[k], note:`Copy remaining right element ${a[k]}`, pyLine:24}); j++; k++; }
+  }
+  function sort(lo,hi){
+    if(lo>=hi) return;
+    const mid=Math.floor((lo+hi)/2);
+    frames.push({array:[...a], compare:[lo,hi], note:`Split [${lo}..${hi}] at midpoint ${mid}`, pyLine:9});
+    sort(lo,mid); sort(mid+1,hi); merge(lo,mid,hi);
+  }
+  sort(0,a.length-1);
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:26});
+  return frames;
+}
+
+function framesQuick(arr){
+  const frames=[], a=[...arr];
+  frames.push({array:[...a], note:"Initial array.", pyLine:1});
+  function partition(lo,hi){
+    const pivot=a[hi];
+    frames.push({array:[...a], pivot:hi, note:`Choose pivot = a[${hi}] = ${pivot}`, pyLine:4});
+    let i=lo-1;
+    for(let j=lo;j<hi;j++){
+      frames.push({array:[...a], pivot:hi, compare:[j], note:`Compare a[${j}]=${a[j]} with pivot ${pivot}`, pyLine:7});
+      if(a[j]<pivot){ i++; [a[i],a[j]]=[a[j],a[i]];
+        frames.push({array:[...a], pivot:hi, swap:[i,j], note:`a[${j}] < pivot — swap into position ${i}`, pyLine:9}); }
+    }
+    [a[i+1],a[hi]]=[a[hi],a[i+1]];
+    frames.push({array:[...a], swap:[i+1,hi], note:`Place pivot at its sorted position ${i+1}`, pyLine:11});
+    return i+1;
+  }
+  function sort(lo,hi){
+    if(lo<hi){ const p=partition(lo,hi); sort(lo,p-1); sort(p+1,hi); }
+  }
+  sort(0,a.length-1);
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:14});
+  return frames;
+}
+
+function framesHeap(arr){
+  const a=[...arr], frames=[], n=a.length, sortedIdx=[];
+  frames.push({array:[...a], note:"Initial array.", pyLine:1});
+  function heapify(size,i){
+    let largest=i, l=2*i+1, r=2*i+2;
+    frames.push({array:[...a], compare:[i], sorted:[...sortedIdx], note:`Heapify at index ${i}`, pyLine:5});
+    if(l<size && a[l]>a[largest]) largest=l;
+    if(r<size && a[r]>a[largest]) largest=r;
+    if(largest!==i){
+      [a[i],a[largest]]=[a[largest],a[i]];
+      frames.push({array:[...a], swap:[i,largest], sorted:[...sortedIdx], note:`Swap a[${i}] with larger child a[${largest}]`, pyLine:9});
+      heapify(size,largest);
+    }
+  }
+  for(let i=Math.floor(n/2)-1;i>=0;i--) heapify(n,i);
+  frames.push({array:[...a], sorted:[...sortedIdx], note:"Max-heap built.", pyLine:15});
+  for(let i=n-1;i>0;i--){
+    [a[0],a[i]]=[a[i],a[0]];
+    sortedIdx.unshift(i);
+    frames.push({array:[...a], swap:[0,i], sorted:[...sortedIdx], note:`Move max (root) to position ${i}`, pyLine:18});
+    heapify(i,0);
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:8});
+  return frames;
+}
+
+/* ============================= SEARCHING ============================= */
+// Searching frames use `target`, `found` idx, `range:[lo,hi]` for narrowing algorithms.
+
+function framesLinearSearch(arr, target){
+  const frames=[];
+  frames.push({array:[...arr], note:`Searching for target = ${target}. Scan from the left, one element at a time.`, pyLine:1});
+  for(let i=0;i<arr.length;i++){
+    frames.push({array:[...arr], compare:[i], note:`Check index ${i}: is a[${i}]=${arr[i]} equal to ${target}?`, pyLine:3});
+    if(arr[i]===target){
+      frames.push({array:[...arr], found:[i], note:`Found ${target} at index ${i}!`, pyLine:4});
+      return frames;
+    }
+  }
+  frames.push({array:[...arr], note:`Target ${target} not found in the array.`, pyLine:6});
+  return frames;
+}
+
+function framesBinarySearch(arrIn, target){
+  const arr=[...arrIn].sort((a,b)=>a-b);
+  const frames=[];
+  frames.push({array:[...arr], note:`Array must be sorted first. Searching for target = ${target}.`, pyLine:1});
+  let lo=0, hi=arr.length-1;
+  while(lo<=hi){
+    const mid=Math.floor((lo+hi)/2);
+    frames.push({array:[...arr], range:[lo,hi], compare:[mid], note:`Range [${lo}..${hi}]. Check midpoint a[${mid}]=${arr[mid]}`, pyLine:5});
+    if(arr[mid]===target){
+      frames.push({array:[...arr], found:[mid], note:`Found ${target} at index ${mid}!`, pyLine:6});
+      return frames;
+    } else if(arr[mid]<target){
+      frames.push({array:[...arr], range:[mid+1,hi], note:`a[${mid}]=${arr[mid]} < ${target} — search right half`, pyLine:8});
+      lo=mid+1;
+    } else {
+      frames.push({array:[...arr], range:[lo,mid-1], note:`a[${mid}]=${arr[mid]} > ${target} — search left half`, pyLine:10});
+      hi=mid-1;
+    }
+  }
+  frames.push({array:[...arr], note:`Target ${target} not found — range is empty.`, pyLine:11});
+  return frames;
+}
+
+function framesJumpSearch(arrIn, target){
+  const arr=[...arrIn].sort((a,b)=>a-b);
+  const frames=[]; const n=arr.length;
+  const step=Math.max(1,Math.floor(Math.sqrt(n)));
+  frames.push({array:[...arr], note:`Array sorted. Jump size = √n ≈ ${step}. Searching for ${target}.`, pyLine:1});
+  let prev=0, curr=Math.min(step,n)-1;
+  while(curr<n && arr[curr]<target){
+    frames.push({array:[...arr], compare:[curr], note:`Block boundary a[${curr}]=${arr[curr]} < ${target} — jump to next block`, pyLine:5});
+    prev=curr+1;
+    curr=Math.min(curr+step,n-1);
+    if(prev>=n){ frames.push({array:[...arr], note:`Passed end of array — target not present.`, pyLine:6}); return frames; }
+  }
+  frames.push({array:[...arr], range:[prev,curr], note:`Target may be in block [${prev}..${curr}] — linear scan this block`, pyLine:8});
+  for(let i=prev;i<=curr && i<n;i++){
+    frames.push({array:[...arr], compare:[i], range:[prev,curr], note:`Check a[${i}]=${arr[i]}`, pyLine:9});
+    if(arr[i]===target){ frames.push({array:[...arr], found:[i], note:`Found ${target} at index ${i}!`, pyLine:10}); return frames; }
+  }
+  frames.push({array:[...arr], note:`Target ${target} not found.`, pyLine:12});
+  return frames;
+}
+
+function framesExponentialSearch(arrIn, target){
+  const arr=[...arrIn].sort((a,b)=>a-b);
+  const frames=[]; const n=arr.length;
+  frames.push({array:[...arr], note:`Array sorted. Find a range by doubling, then binary search inside it.`, pyLine:1});
+  if(arr[0]===target){ frames.push({array:[...arr], found:[0], note:`Found ${target} at index 0!`, pyLine:2}); return frames; }
+  let i=1;
+  while(i<n && arr[i]<=target){
+    frames.push({array:[...arr], compare:[i], note:`a[${i}]=${arr[i]} ≤ ${target} — double the bound`, pyLine:4});
+    i*=2;
+  }
+  const lo=Math.floor(i/2), hi=Math.min(i,n-1);
+  frames.push({array:[...arr], range:[lo,hi], note:`Range found: [${lo}..${hi}]. Binary search within it.`, pyLine:6});
+  let l=lo,h=hi;
+  while(l<=h){
+    const mid=Math.floor((l+h)/2);
+    frames.push({array:[...arr], range:[l,h], compare:[mid], note:`Binary search: check a[${mid}]=${arr[mid]}`, pyLine:7});
+    if(arr[mid]===target){ frames.push({array:[...arr], found:[mid], note:`Found ${target} at index ${mid}!`, pyLine:7}); return frames; }
+    else if(arr[mid]<target) l=mid+1; else h=mid-1;
+  }
+  frames.push({array:[...arr], note:`Target ${target} not found.`, pyLine:8});
+  return frames;
+}
+
+/* ============================= TREES ============================= */
+// Tree frames use `tree` (a plain cloneable node graph), `highlight`, `visited`.
+let treeIdCounter = 0;
+function makeTreeNode(val){ return {id:'n'+(treeIdCounter++), val, left:null, right:null, height:1}; }
+function cloneTree(node){
+  if(!node) return null;
+  return {id:node.id, val:node.val, height:node.height, left:cloneTree(node.left), right:cloneTree(node.right)};
+}
+function nodeHeight(n){ return n ? n.height : 0; }
+function updateHeight(n){ n.height = 1 + Math.max(nodeHeight(n.left), nodeHeight(n.right)); }
+function balanceFactor(n){ return n ? nodeHeight(n.left) - nodeHeight(n.right) : 0; }
+function rotateRight(y){ const x=y.left; const T2=x.right; x.right=y; y.left=T2; updateHeight(y); updateHeight(x); return x; }
+function rotateLeft(x){ const y=x.right; const T2=y.left; y.left=x; x.right=T2; updateHeight(x); updateHeight(y); return y; }
+
+// Plain (non-animated) BST builder, used as the starting tree for search/delete/traversal demos.
+function buildSimpleBST(values){
+  treeIdCounter = 0;
+  let root = null;
+  for(const v of values){
+    if(!root){ root = makeTreeNode(v); continue; }
+    let cur = root;
+    while(true){
+      if(v < cur.val){ if(!cur.left){ cur.left = makeTreeNode(v); break; } cur = cur.left; }
+      else if(v > cur.val){ if(!cur.right){ cur.right = makeTreeNode(v); break; } cur = cur.right; }
+      else break; // duplicate, skip
+    }
+  }
+  return root;
+}
+
+function framesBSTBuild(values){
+  treeIdCounter = 0;
+  let root = null;
+  const frames = [{tree:null, note:"Empty tree. We'll insert each value one at a time.", pyLine:1}];
+  for(const v of values){
+    if(!root){
+      root = makeTreeNode(v);
+      frames.push({tree:cloneTree(root), highlight:{inserted:root.id}, note:`Tree is empty — ${v} becomes the root.`, pyLine:3});
+      continue;
+    }
+    let cur = root;
+    while(true){
+      frames.push({tree:cloneTree(root), highlight:{compare:[cur.id]}, note:`Compare ${v} with ${cur.val}`, pyLine:6});
+      if(v < cur.val){
+        if(!cur.left){ cur.left = makeTreeNode(v); frames.push({tree:cloneTree(root), highlight:{inserted:cur.left.id}, note:`${v} < ${cur.val} — insert as left child`, pyLine:8}); break; }
+        cur = cur.left;
+      } else if(v > cur.val){
+        if(!cur.right){ cur.right = makeTreeNode(v); frames.push({tree:cloneTree(root), highlight:{inserted:cur.right.id}, note:`${v} > ${cur.val} — insert as right child`, pyLine:10}); break; }
+        cur = cur.right;
+      } else {
+        frames.push({tree:cloneTree(root), highlight:{compare:[cur.id]}, note:`${v} already exists — duplicates are ignored in a plain BST`, pyLine:11});
+        break;
+      }
+    }
+  }
+  frames.push({tree:cloneTree(root), note:"Build complete.", pyLine:12});
+  return frames;
+}
+
+function framesBSTSearch(values, target){
+  const root = buildSimpleBST(values);
+  const frames = [{tree:cloneTree(root), note:`Searching for ${target}.`, pyLine:1}];
+  let cur = root;
+  while(cur){
+    frames.push({tree:cloneTree(root), highlight:{compare:[cur.id]}, note:`Compare ${target} with ${cur.val}`, pyLine:4});
+    if(target === cur.val){ frames.push({tree:cloneTree(root), highlight:{found:cur.id}, note:`Found ${target}!`, pyLine:5}); return frames; }
+    const goingLeft = target < cur.val;
+    const from = cur.val;
+    cur = goingLeft ? cur.left : cur.right;
+    frames.push({tree:cloneTree(root), note:`${target} ${goingLeft?'<':'>'} ${from} — move to the ${goingLeft?'left':'right'} subtree`, pyLine:7});
+  }
+  frames.push({tree:cloneTree(root), note:`${target} not found in the tree.`, pyLine:9});
+  return frames;
+}
+
+function framesBSTDelete(values, target){
+  let root = buildSimpleBST(values);
+  const frames = [{tree:cloneTree(root), note:`Deleting ${target} from the tree.`, pyLine:1}];
+  function del(node, val){
+    if(!node){ frames.push({tree:cloneTree(root), note:`${val} not found in the tree.`, pyLine:3}); return null; }
+    frames.push({tree:cloneTree(root), highlight:{compare:[node.id]}, note:`Compare ${val} with ${node.val}`, pyLine:5});
+    if(val < node.val){ node.left = del(node.left, val); return node; }
+    if(val > node.val){ node.right = del(node.right, val); return node; }
+    frames.push({tree:cloneTree(root), highlight:{found:node.id}, note:`Found ${val} — determine deletion case`, pyLine:8});
+    if(!node.left && !node.right){
+      frames.push({tree:cloneTree(root), highlight:{deleted:node.id}, note:`Leaf node — remove it directly`, pyLine:10});
+      return null;
+    }
+    if(!node.left || !node.right){
+      const child = node.left || node.right;
+      frames.push({tree:cloneTree(root), highlight:{deleted:node.id}, note:`One child — replace this node with its child`, pyLine:13});
+      return child;
+    }
+    let succ = node.right;
+    while(succ.left) succ = succ.left;
+    frames.push({tree:cloneTree(root), highlight:{compare:[succ.id]}, note:`Two children — inorder successor (min of right subtree) is ${succ.val}`, pyLine:17});
+    node.val = succ.val;
+    frames.push({tree:cloneTree(root), highlight:{inserted:node.id}, note:`Copy successor value ${succ.val} into this node`, pyLine:18});
+    node.right = del(node.right, succ.val);
+    return node;
+  }
+  root = del(root, target);
+  frames.push({tree:cloneTree(root), note:`Deletion complete.`, pyLine:20});
+  return frames;
+}
+
+function framesTraversal(values, type){
+  const root = buildSimpleBST(values);
+  const frames = [{tree:cloneTree(root), note:`Starting ${type.replace('order',' order')} traversal.`, pyLine:1}];
+  const visitedIds = [], visitedVals = [];
+  function visit(node){
+    visitedIds.push(node.id); visitedVals.push(node.val);
+    frames.push({tree:cloneTree(root), highlight:{compare:[node.id]}, visited:[...visitedIds], note:`Visit ${node.val}  →  order so far: ${visitedVals.join(', ')}`, pyLine: type==='preorder'?3:type==='inorder'?4:type==='postorder'?5:4});
+  }
+  if(type==='levelorder'){
+    const q = root ? [root] : [];
+    while(q.length){
+      const node = q.shift();
+      visit(node);
+      if(node.left) q.push(node.left);
+      if(node.right) q.push(node.right);
+    }
+  } else {
+    (function walk(node){
+      if(!node) return;
+      if(type==='preorder') visit(node);
+      walk(node.left);
+      if(type==='inorder') visit(node);
+      walk(node.right);
+      if(type==='postorder') visit(node);
+    })(root);
+  }
+  frames.push({tree:cloneTree(root), visited:[...visitedIds], note:`Traversal complete: ${visitedVals.join(', ')}`, pyLine:8});
+  return frames;
+}
+
+function framesAVLInsert(values){
+  treeIdCounter = 0;
+  let root = null;
+  const frames = [{tree:null, note:"Empty AVL tree. Every insertion is followed by a rebalancing check.", pyLine:1}];
+  for(const val of values){
+    if(!root){
+      root = makeTreeNode(val);
+      frames.push({tree:cloneTree(root), highlight:{inserted:root.id}, note:`Tree empty — ${val} becomes the root.`, pyLine:3});
+      continue;
+    }
+    const path = [];
+    let cur = root, skip=false;
+    while(true){
+      path.push(cur);
+      frames.push({tree:cloneTree(root), highlight:{compare:[cur.id]}, note:`Compare ${val} with ${cur.val}`, pyLine:6});
+      if(val < cur.val){
+        if(!cur.left){ cur.left = makeTreeNode(val); path.push(cur.left); frames.push({tree:cloneTree(root), highlight:{inserted:cur.left.id}, note:`Insert ${val} as left child of ${cur.val}`, pyLine:8}); break; }
+        cur = cur.left;
+      } else if(val > cur.val){
+        if(!cur.right){ cur.right = makeTreeNode(val); path.push(cur.right); frames.push({tree:cloneTree(root), highlight:{inserted:cur.right.id}, note:`Insert ${val} as right child of ${cur.val}`, pyLine:10}); break; }
+        cur = cur.right;
+      } else { frames.push({tree:cloneTree(root), highlight:{compare:[cur.id]}, note:`${val} already exists — skip`, pyLine:11}); skip=true; break; }
+    }
+    if(skip) continue;
+    // Walk back up the path (excluding the new leaf) rebalancing.
+    for(let i=path.length-2;i>=0;i--){
+      const node = path[i];
+      updateHeight(node);
+      const bf = balanceFactor(node);
+      frames.push({tree:cloneTree(root), highlight:{compare:[node.id]}, note:`Recompute balance factor at ${node.val}: ${bf}`, pyLine:15});
+      let newSubRoot = node, label = null;
+      if(bf > 1 && balanceFactor(node.left) >= 0){ newSubRoot = rotateRight(node); label = `Left-Left case — rotate right at ${node.val}`; }
+      else if(bf < -1 && balanceFactor(node.right) <= 0){ newSubRoot = rotateLeft(node); label = `Right-Right case — rotate left at ${node.val}`; }
+      else if(bf > 1 && balanceFactor(node.left) < 0){ node.left = rotateLeft(node.left); newSubRoot = rotateRight(node); label = `Left-Right case — rotate left then right at ${node.val}`; }
+      else if(bf < -1 && balanceFactor(node.right) > 0){ node.right = rotateRight(node.right); newSubRoot = rotateLeft(node); label = `Right-Left case — rotate right then left at ${node.val}`; }
+      if(newSubRoot !== node){
+        if(i===0){ root = newSubRoot; }
+        else {
+          const parent = path[i-1];
+          if(parent.left===node) parent.left = newSubRoot; else parent.right = newSubRoot;
+        }
+        path[i] = newSubRoot;
+        frames.push({tree:cloneTree(root), highlight:{rotated:newSubRoot.id}, note:`Unbalanced (${bf}) — ${label}`, pyLine:22});
+      }
+    }
+  }
+  frames.push({tree:cloneTree(root), note:"All values inserted — tree is height-balanced.", pyLine:25});
+  return frames;
+}
+
+/* ============================= TREE LAYOUT + RENDER ============================= */
+function layoutTree(root){
+  let counter = 0;
+  const pos = {};
+  (function assignX(node, depth){
+    if(!node) return;
+    assignX(node.left, depth+1);
+    pos[node.id] = {slot:counter, depth};
+    counter++;
+    assignX(node.right, depth+1);
+  })(root, 0);
+  const n = Math.max(counter,1);
+  const W = 840, topMargin = 34, rowH = 68;
+  Object.values(pos).forEach(p=>{ p.px = (p.slot+0.5)/n*W + 30; p.py = topMargin + p.depth*rowH; });
+  return pos;
+}
+const SVGNS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs){
+  const e = document.createElementNS(SVGNS, tag);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function renderTreeFrame(frame){
+  const wrap = document.getElementById('canvasWrap');
+  wrap.innerHTML = '';
+  wrap.classList.add('items-start');
+  const svg = svgEl('svg', {width:'100%', height:'100%', viewBox:'0 0 900 400', style:'overflow:visible'});
+  wrap.appendChild(svg);
+  const root = frame.tree;
+  if(!root){
+    svg.appendChild(svgEl('text', {x:450, y:200, 'text-anchor':'middle', fill:'var(--text-dim)', 'font-size':14}));
+    svg.lastChild.textContent = 'Empty tree';
+    return;
+  }
+  const pos = layoutTree(root);
+  (function drawEdges(node){
+    if(!node) return;
+    const p = pos[node.id];
+    [node.left, node.right].forEach(child=>{
+      if(child){ const cp = pos[child.id];
+        svg.appendChild(svgEl('line',{x1:p.px,y1:p.py,x2:cp.px,y2:cp.py,stroke:'var(--border)','stroke-width':2}));
+        drawEdges(child);
+      }
+    });
+  })(root);
+  const h = frame.highlight || {};
+  (function drawNodes(node){
+    if(!node) return;
+    const p = pos[node.id];
+    let fill = 'var(--accent2)';
+    if(frame.visited && frame.visited.includes(node.id)) fill = 'var(--good)';
+    if(h.compare && h.compare.includes(node.id)) fill = 'var(--warn)';
+    if(h.inserted===node.id) fill = 'var(--accent)';
+    if(h.found===node.id) fill = 'var(--good)';
+    if(h.deleted===node.id) fill = 'var(--danger)';
+    if(h.rotated===node.id) fill = '#c084fc';
+    const g = svgEl('g',{});
+    g.appendChild(svgEl('circle',{cx:p.px,cy:p.py,r:19,fill,stroke:'var(--border)','stroke-width':1.5}));
+    const t = svgEl('text',{x:p.px,y:p.py+4,'text-anchor':'middle','font-size':12,'font-family':'JetBrains Mono, monospace',fill:'#0b0d12','font-weight':700});
+    t.textContent = node.val;
+    g.appendChild(t);
+    svg.appendChild(g);
+    drawNodes(node.left); drawNodes(node.right);
+  })(root);
+}
+
+/* ============================= GRAPHS ============================= */
+// Graph = {nodes:[{id,label}], edges:[{id,from,to,weight}]}. Undirected throughout.
+function labelOf(graph, id){ const n = graph.nodes.find(n=>n.id===id); return n ? n.label : id; }
+function buildAdj(graph){
+  const adj = {};
+  graph.nodes.forEach(n=> adj[n.id]=[]);
+  graph.edges.forEach(e=>{
+    adj[e.from].push({to:e.to, weight:e.weight, edgeId:e.id});
+    adj[e.to].push({to:e.from, weight:e.weight, edgeId:e.id});
+  });
+  return adj;
+}
+function genConnectedGraph(n){
+  const nodeIds = Array.from({length:n}, (_,i)=>i);
+  const nodes = nodeIds.map(i=>({id:'g'+i, label:String.fromCharCode(65+i)}));
+  let edgeId=0;
+  const edges=[];
+  const existing = new Set();
+  // Guarantee connectivity: random spanning tree via random insertion order.
+  const order = [...nodeIds].sort(()=>Math.random()-0.5);
+  for(let i=1;i<order.length;i++){
+    const a = order[i], b = order[Math.floor(Math.random()*i)];
+    const key = [a,b].sort((x,y)=>x-y).join('-');
+    existing.add(key);
+    edges.push({id:'e'+(edgeId++), from:'g'+a, to:'g'+b, weight:1+Math.floor(Math.random()*20)});
+  }
+  // A few extra edges for cycles (needed to make MST/Dijkstra non-trivial).
+  let extra = Math.max(1, Math.floor(n*0.5)), attempts=0;
+  while(extra>0 && attempts<60){
+    attempts++;
+    const a = nodeIds[Math.floor(Math.random()*n)], b = nodeIds[Math.floor(Math.random()*n)];
+    if(a===b) continue;
+    const key = [a,b].sort((x,y)=>x-y).join('-');
+    if(existing.has(key)) continue;
+    existing.add(key);
+    edges.push({id:'e'+(edgeId++), from:'g'+a, to:'g'+b, weight:1+Math.floor(Math.random()*20)});
+    extra--;
+  }
+  return {nodes, edges};
+}
+
+function framesBFS(graph, startId){
+  const adj = buildAdj(graph);
+  const frames = [];
+  const visited = new Set([startId]);
+  const queue = [startId];
+  const treeEdges = [];
+  const order = [];
+  frames.push({graph, showWeights:false, highlight:{visited:[...visited], current:null, treeEdges:[]}, note:`Start BFS at ${labelOf(graph,startId)} — enqueue it.`, pyLine:4});
+  while(queue.length){
+    const cur = queue.shift();
+    order.push(cur);
+    frames.push({graph, showWeights:false, highlight:{visited:[...visited], current:cur, treeEdges:[...treeEdges]}, note:`Dequeue and visit ${labelOf(graph,cur)}.`, pyLine:6});
+    for(const nb of adj[cur]){
+      if(!visited.has(nb.to)){
+        visited.add(nb.to); queue.push(nb.to); treeEdges.push(nb.edgeId);
+        frames.push({graph, showWeights:false, highlight:{visited:[...visited], current:cur, treeEdges:[...treeEdges], edgeActive:[nb.edgeId]}, note:`Discover ${labelOf(graph,nb.to)} — enqueue it.`, pyLine:9});
+      }
+    }
+  }
+  frames.push({graph, showWeights:false, highlight:{visited:[...visited], current:null, treeEdges:[...treeEdges]}, note:`BFS complete. Visit order: ${order.map(id=>labelOf(graph,id)).join(', ')}`, pyLine:12});
+  return frames;
+}
+
+function framesDFS(graph, startId){
+  const adj = buildAdj(graph);
+  const visited = new Set();
+  const treeEdges = [];
+  const order = [];
+  const frames = [{graph, showWeights:false, highlight:{visited:[], current:null, treeEdges:[]}, note:`Start DFS at ${labelOf(graph,startId)}.`, pyLine:3}];
+  (function visit(id){
+    visited.add(id); order.push(id);
+    frames.push({graph, showWeights:false, highlight:{visited:[...visited], current:id, treeEdges:[...treeEdges]}, note:`Visit ${labelOf(graph,id)}.`, pyLine:5});
+    for(const nb of adj[id]){
+      if(!visited.has(nb.to)){
+        treeEdges.push(nb.edgeId);
+        frames.push({graph, showWeights:false, highlight:{visited:[...visited], current:id, treeEdges:[...treeEdges], edgeActive:[nb.edgeId]}, note:`Explore edge to unvisited ${labelOf(graph,nb.to)} — recurse.`, pyLine:8});
+        visit(nb.to);
+      }
+    }
+    frames.push({graph, showWeights:false, highlight:{visited:[...visited], current:id, treeEdges:[...treeEdges]}, note:`Backtrack from ${labelOf(graph,id)} — all neighbors explored.`, pyLine:9});
+  })(startId);
+  frames.push({graph, showWeights:false, highlight:{visited:[...visited], current:null, treeEdges:[...treeEdges]}, note:`DFS complete. Visit order: ${order.map(id=>labelOf(graph,id)).join(', ')}`, pyLine:9});
+  return frames;
+}
+
+function framesDijkstra(graph, startId){
+  const adj = buildAdj(graph);
+  const dist = {}; graph.nodes.forEach(n=>dist[n.id]=Infinity);
+  dist[startId] = 0;
+  const visited = new Set();
+  const treeEdges = [];
+  const frames = [{graph, showWeights:true, highlight:{visited:[], current:null, dist:{...dist}, treeEdges:[]}, note:`Initialize: distance to ${labelOf(graph,startId)} = 0, all others = ∞.`, pyLine:5}];
+  while(visited.size < graph.nodes.length){
+    let u=null, best=Infinity;
+    graph.nodes.forEach(n=>{ if(!visited.has(n.id) && dist[n.id]<best){ best=dist[n.id]; u=n.id; } });
+    if(u===null) break;
+    visited.add(u);
+    frames.push({graph, showWeights:true, highlight:{visited:[...visited], current:u, dist:{...dist}, treeEdges:[...treeEdges]}, note:`Select unvisited node with smallest distance: ${labelOf(graph,u)} (${dist[u]}).`, pyLine:9});
+    for(const nb of adj[u]){
+      if(visited.has(nb.to)) continue;
+      const cand = dist[u] + nb.weight;
+      const curLabel = dist[nb.to]===Infinity ? '∞' : dist[nb.to];
+      frames.push({graph, showWeights:true, highlight:{visited:[...visited], current:u, dist:{...dist}, treeEdges:[...treeEdges], edgeActive:[nb.edgeId]}, note:`Relax edge ${labelOf(graph,u)}→${labelOf(graph,nb.to)}: ${dist[u]}+${nb.weight}=${cand} vs current ${curLabel}`, pyLine:12});
+      if(cand < dist[nb.to]){
+        dist[nb.to] = cand; treeEdges.push(nb.edgeId);
+        frames.push({graph, showWeights:true, highlight:{visited:[...visited], current:u, dist:{...dist}, treeEdges:[...treeEdges], edgeActive:[nb.edgeId]}, note:`Shorter path found — update distance to ${labelOf(graph,nb.to)} = ${cand}.`, pyLine:14});
+      }
+    }
+  }
+  frames.push({graph, showWeights:true, highlight:{visited:[...visited], current:null, dist:{...dist}, treeEdges:[...treeEdges]}, note:`Dijkstra complete — shortest distances from ${labelOf(graph,startId)} shown above each node.`, pyLine:17});
+  return frames;
+}
+
+function framesKruskal(graph){
+  const parent = {}; graph.nodes.forEach(n=>parent[n.id]=n.id);
+  function find(x){ while(parent[x]!==x) x=parent[x]; return x; }
+  function union(a,b){ const ra=find(a), rb=find(b); if(ra===rb) return false; parent[ra]=rb; return true; }
+  const sorted = [...graph.edges].sort((a,b)=>a.weight-b.weight);
+  const frames = [{graph, showWeights:true, highlight:{mstEdges:[]}, note:`Sort edges by weight: ${sorted.map(e=>e.weight).join(', ')}`, pyLine:5}];
+  const mst = []; let total=0;
+  for(const e of sorted){
+    frames.push({graph, showWeights:true, highlight:{mstEdges:[...mst], edgeActive:[e.id]}, note:`Consider edge ${labelOf(graph,e.from)}–${labelOf(graph,e.to)} (weight ${e.weight}).`, pyLine:9});
+    if(find(e.from)!==find(e.to)){
+      union(e.from,e.to); mst.push(e.id); total+=e.weight;
+      frames.push({graph, showWeights:true, highlight:{mstEdges:[...mst]}, note:`No cycle — add to MST. Total weight so far: ${total}.`, pyLine:11});
+    } else {
+      frames.push({graph, showWeights:true, highlight:{mstEdges:[...mst], edgeRejected:[e.id]}, note:`${labelOf(graph,e.from)} and ${labelOf(graph,e.to)} already connected — would form a cycle. Skip.`, pyLine:13});
+    }
+    if(mst.length === graph.nodes.length-1) break;
+  }
+  frames.push({graph, showWeights:true, highlight:{mstEdges:[...mst]}, note:`MST complete. Total weight: ${total}.`, pyLine:16});
+  return frames;
+}
+
+/* ============================= GRAPH LAYOUT + RENDER ============================= */
+function layoutGraph(nodes){
+  const n = nodes.length, cx=430, cy=185, r=145;
+  const pos = {};
+  nodes.forEach((node,i)=>{
+    const angle = (i/n)*2*Math.PI - Math.PI/2;
+    pos[node.id] = {px: cx+r*Math.cos(angle), py: cy+r*Math.sin(angle)};
+  });
+  return pos;
+}
+function renderGraphFrame(frame){
+  const wrap = document.getElementById('canvasWrap');
+  wrap.innerHTML=''; wrap.classList.add('items-start');
+  const svg = svgEl('svg', {width:'100%', height:'100%', viewBox:'0 0 860 370', style:'overflow:visible'});
+  wrap.appendChild(svg);
+  const {nodes, edges} = frame.graph;
+  const pos = layoutGraph(nodes);
+  const h = frame.highlight || {};
+  const treeSet = new Set(h.treeEdges||[]);
+  const mstSet = new Set(h.mstEdges||[]);
+  const activeSet = new Set(h.edgeActive||[]);
+  const rejectSet = new Set(h.edgeRejected||[]);
+
+  edges.forEach(e=>{
+    const p1=pos[e.from], p2=pos[e.to];
+    let stroke='var(--border)', width=2, dash=null;
+    if(treeSet.has(e.id) || mstSet.has(e.id)){ stroke='var(--good)'; width=3; }
+    if(rejectSet.has(e.id)){ stroke='var(--danger)'; width=2; dash='4,3'; }
+    if(activeSet.has(e.id)){ stroke='var(--warn)'; width=3.5; }
+    const attrs = {x1:p1.px,y1:p1.py,x2:p2.px,y2:p2.py,stroke,'stroke-width':width};
+    const line = svgEl('line', attrs);
+    if(dash) line.setAttribute('stroke-dasharray', dash);
+    svg.appendChild(line);
+    if(frame.showWeights){
+      const mx=(p1.px+p2.px)/2, my=(p1.py+p2.py)/2;
+      svg.appendChild(svgEl('rect',{x:mx-11,y:my-9,width:22,height:16,fill:'var(--panel)',rx:3}));
+      const t = svgEl('text',{x:mx,y:my+3,'text-anchor':'middle','font-size':10,'font-family':'JetBrains Mono, monospace',fill:'var(--text)'});
+      t.textContent = e.weight;
+      svg.appendChild(t);
+    }
+  });
+
+  const visitedSet = new Set(h.visited||[]);
+  nodes.forEach(n=>{
+    const p = pos[n.id];
+    let fill='var(--panel2)', textColor='var(--text)';
+    if(visitedSet.has(n.id)){ fill='var(--accent2)'; textColor='#0b0d12'; }
+    if(h.current===n.id){ fill='var(--warn)'; textColor='#0b0d12'; }
+    const g = svgEl('g',{});
+    g.appendChild(svgEl('circle',{cx:p.px,cy:p.py,r:20,fill,stroke:'var(--border)','stroke-width':1.5}));
+    const t = svgEl('text',{x:p.px,y:p.py+4,'text-anchor':'middle','font-size':12,'font-family':'JetBrains Mono, monospace',fill:textColor,'font-weight':700});
+    t.textContent = n.label;
+    g.appendChild(t);
+    svg.appendChild(g);
+    if(h.dist){
+      const d = h.dist[n.id];
+      const label = d===undefined ? '' : (d===Infinity ? '∞' : String(d));
+      const dt = svgEl('text',{x:p.px,y:p.py-28,'text-anchor':'middle','font-size':11,'font-family':'JetBrains Mono, monospace',fill:'var(--accent)','font-weight':700});
+      dt.textContent = label;
+      svg.appendChild(dt);
+    }
+  });
+}
+
+/* ============================= PYTHON SOURCE (line-numbered logically) ============================= */
+const PY = {
+bubble:`def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n - 1):
+        for j in range(n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr  # early-exit variant checks a 'swapped' flag`,
+
+selection:`def selection_sort(arr):
+    n = len(arr)
+    for i in range(n - 1):
+        min_idx = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        if min_idx != i:
+            arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr`,
+
+insertion:`def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr`,
+
+merge:`def merge_sort(arr, lo=0, hi=None):
+    if hi is None:
+        hi = len(arr) - 1
+    if lo >= hi:
+        return arr
+    mid = (lo + hi) // 2
+    merge_sort(arr, lo, mid)
+    merge_sort(arr, mid + 1, hi)
+    merge(arr, lo, mid, hi)
+    return arr
+
+def merge(arr, lo, mid, hi):
+    left, right = arr[lo:mid+1], arr[mid+1:hi+1]
+    i = j = 0
+    k = lo
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            arr[k] = left[i]; i += 1
+        else:
+            arr[k] = right[j]; j += 1
+        k += 1
+    while i < len(left):
+        arr[k] = left[i]; i += 1; k += 1
+    while j < len(right):
+        arr[k] = right[j]; j += 1; k += 1
+    return arr`,
+
+quick:`def quick_sort(arr, lo=0, hi=None):
+    if hi is None:
+        hi = len(arr) - 1
+    if lo < hi:
+        p = partition(arr, lo, hi)
+        quick_sort(arr, lo, p - 1)
+        quick_sort(arr, p + 1, hi)
+    return arr
+
+def partition(arr, lo, hi):
+    pivot = arr[hi]
+    i = lo - 1
+    for j in range(lo, hi):
+        if arr[j] < pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i+1], arr[hi] = arr[hi], arr[i+1]
+    return i + 1`,
+
+heap:`def heap_sort(arr):
+    n = len(arr)
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(arr, i, 0)
+    return arr
+
+def heapify(arr, size, i):
+    largest, l, r = i, 2*i + 1, 2*i + 2
+    if l < size and arr[l] > arr[largest]:
+        largest = l
+    if r < size and arr[r] > arr[largest]:
+        largest = r
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, size, largest)`,
+
+linear_search:`def linear_search(arr, target):
+    for i in range(len(arr)):
+        if arr[i] == target:
+            return i
+    return -1  # not found`,
+
+binary_search:`def binary_search(arr, target):
+    # arr must be sorted
+    lo, hi = 0, len(arr) - 1
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1  # not found`,
+
+jump_search:`import math
+
+def jump_search(arr, target):
+    n = len(arr)
+    step = int(math.sqrt(n))
+    prev = 0
+    curr = min(step, n) - 1
+    while curr < n and arr[curr] < target:
+        prev = curr + 1
+        curr = min(curr + step, n - 1)
+        if prev >= n:
+            return -1
+    for i in range(prev, min(curr + 1, n)):
+        if arr[i] == target:
+            return i
+    return -1  # not found`,
+
+bst_build:`class Node:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def insert(root, val):
+    if root is None:
+        return Node(val)
+    if val < root.val:
+        root.left = insert(root.left, val)
+    elif val > root.val:
+        root.right = insert(root.right, val)
+    # equal values are ignored (no duplicates)
+    return root
+
+def build_bst(values):
+    root = None
+    for v in values:
+        root = insert(root, v)
+    return root`,
+
+bst_search:`def search(root, target):
+    current = root
+    while current is not None:
+        if target == current.val:
+            return current
+        elif target < current.val:
+            current = current.left
+        else:
+            current = current.right
+    return None  # not found`,
+
+bst_delete:`def delete(root, val):
+    if root is None:
+        return None
+    if val < root.val:
+        root.left = delete(root.left, val)
+    elif val > root.val:
+        root.right = delete(root.right, val)
+    else:
+        # Case 1: leaf, Case 2: one child
+        if root.left is None:
+            return root.right
+        if root.right is None:
+            return root.left
+        # Case 3: two children — replace with inorder successor
+        succ = root.right
+        while succ.left is not None:
+            succ = succ.left
+        root.val = succ.val
+        root.right = delete(root.right, succ.val)
+    return root`,
+
+traverse_inorder:`def inorder(node, result=None):
+    if result is None:
+        result = []
+    if node is not None:
+        inorder(node.left, result)
+        result.append(node.val)
+        inorder(node.right, result)
+    return result`,
+
+traverse_preorder:`def preorder(node, result=None):
+    if result is None:
+        result = []
+    if node is not None:
+        result.append(node.val)
+        preorder(node.left, result)
+        preorder(node.right, result)
+    return result`,
+
+traverse_postorder:`def postorder(node, result=None):
+    if result is None:
+        result = []
+    if node is not None:
+        postorder(node.left, result)
+        postorder(node.right, result)
+        result.append(node.val)
+    return result`,
+
+traverse_levelorder:`from collections import deque
+
+def level_order(root):
+    if root is None:
+        return []
+    result = []
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        result.append(node.val)
+        if node.left:
+            queue.append(node.left)
+        if node.right:
+            queue.append(node.right)
+    return result`,
+
+avl_insert:`class AVLNode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+        self.height = 1
+
+def height(n):
+    return n.height if n else 0
+
+def balance_factor(n):
+    return height(n.left) - height(n.right) if n else 0
+
+def rotate_right(y):
+    x = y.left
+    y.left = x.right
+    x.right = y
+    y.height = 1 + max(height(y.left), height(y.right))
+    x.height = 1 + max(height(x.left), height(x.right))
+    return x
+
+def rotate_left(x):
+    y = x.right
+    x.right = y.left
+    y.left = x
+    x.height = 1 + max(height(x.left), height(x.right))
+    y.height = 1 + max(height(y.left), height(y.right))
+    return y
+
+def avl_insert(node, val):
+    if node is None:
+        return AVLNode(val)
+    if val < node.val:
+        node.left = avl_insert(node.left, val)
+    elif val > node.val:
+        node.right = avl_insert(node.right, val)
+    else:
+        return node  # no duplicates
+
+    node.height = 1 + max(height(node.left), height(node.right))
+    bf = balance_factor(node)
+
+    if bf > 1 and balance_factor(node.left) >= 0:      # Left-Left
+        return rotate_right(node)
+    if bf < -1 and balance_factor(node.right) <= 0:    # Right-Right
+        return rotate_left(node)
+    if bf > 1 and balance_factor(node.left) < 0:       # Left-Right
+        node.left = rotate_left(node.left)
+        return rotate_right(node)
+    if bf < -1 and balance_factor(node.right) > 0:     # Right-Left
+        node.right = rotate_right(node.right)
+        return rotate_left(node)
+    return node`,
+
+bfs:`from collections import deque
+
+def bfs(graph, start):
+    visited = {start}
+    queue = deque([start])
+    order = []
+    while queue:
+        node = queue.popleft()
+        order.append(node)
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+    return order`,
+
+dfs:`def dfs(graph, start, visited=None, order=None):
+    if visited is None:
+        visited, order = set(), []
+    visited.add(start)
+    order.append(start)
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited, order)
+    return order`,
+
+dijkstra:`import heapq
+
+def dijkstra(graph, start):
+    dist = {node: float('inf') for node in graph}
+    dist[start] = 0
+    visited = set()
+    pq = [(0, start)]
+    while pq:
+        d, u = heapq.heappop(pq)
+        if u in visited:
+            continue
+        visited.add(u)
+        for v, weight in graph[u]:
+            candidate = d + weight
+            if candidate < dist[v]:
+                dist[v] = candidate
+                heapq.heappush(pq, (candidate, v))
+    return dist`,
+
+kruskal:`class DisjointSet:
+    def __init__(self, nodes):
+        self.parent = {n: n for n in nodes}
+
+    def find(self, x):
+        while self.parent[x] != x:
+            x = self.parent[x]
+        return x
+
+    def union(self, a, b):
+        ra, rb = self.find(a), self.find(b)
+        if ra == rb:
+            return False
+        self.parent[ra] = rb
+        return True
+
+def kruskal(nodes, edges):
+    # edges: list of (weight, u, v)
+    dsu = DisjointSet(nodes)
+    mst, total = [], 0
+    for weight, u, v in sorted(edges):
+        if dsu.union(u, v):
+            mst.append((u, v, weight))
+            total += weight
+    return mst, total`,
+
+exponential_search:`def exponential_search(arr, target):
+    n = len(arr)
+    if arr[0] == target:
+        return 0
+    i = 1
+    while i < n and arr[i] <= target:
+        i *= 2
+    lo, hi = i // 2, min(i, n - 1)
+    return binary_search_range(arr, target, lo, hi)
+
+def binary_search_range(arr, target, lo, hi):
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return -1  # not found`
+};
+
+/* ============================= ALGORITHM CATALOG ============================= */
+const CATALOG = {
+  bubble:{ name:"Bubble Sort", cat:"Sorting", frames:framesBubble,
+    explain:"Repeatedly steps through the array, comparing adjacent elements and swapping them if they're in the wrong order. Each full pass 'bubbles' the largest remaining value to its final position at the end of the unsorted region. Simple to reason about, but quadratic — mostly useful for teaching and for nearly-sorted data.",
+    pseudo:`for i in 0..n-1:
+  for j in 0..n-i-2:
+    if a[j] > a[j+1]:
+      swap(a[j], a[j+1])`,
+    complexity:{best:"O(n) — already sorted, with early exit",avg:"O(n²)",worst:"O(n²)",space:"O(1)",stable:"Yes"}},
+
+  selection:{ name:"Selection Sort", cat:"Sorting", frames:framesSelection,
+    explain:"Divides the array into a sorted and an unsorted region. On each pass it scans the unsorted region to find the minimum element and swaps it into place at the front of that region. It always does exactly n passes regardless of input order, making at most n swaps — useful when writes are expensive.",
+    pseudo:`for i in 0..n-2:
+  min_idx = i
+  for j in i+1..n-1:
+    if a[j] < a[min_idx]: min_idx = j
+  swap(a[i], a[min_idx])`,
+    complexity:{best:"O(n²)",avg:"O(n²)",worst:"O(n²)",space:"O(1)",stable:"No"}},
+
+  insertion:{ name:"Insertion Sort", cat:"Sorting", frames:framesInsertion,
+    explain:"Builds the sorted array one element at a time, similar to sorting a hand of playing cards: it takes the next element (the 'key') and shifts every larger element in the sorted prefix one step right until it finds the key's correct slot. Excellent for small or nearly-sorted arrays, and used as the base case inside hybrid sorts like Timsort.",
+    pseudo:`for i in 1..n-1:
+  key = a[i]; j = i-1
+  while j >= 0 and a[j] > key:
+    a[j+1] = a[j]; j -= 1
+  a[j+1] = key`,
+    complexity:{best:"O(n) — already sorted",avg:"O(n²)",worst:"O(n²)",space:"O(1)",stable:"Yes"}},
+
+  merge:{ name:"Merge Sort", cat:"Sorting", frames:framesMerge,
+    explain:"A divide-and-conquer algorithm: it recursively splits the array in half until each piece has one element, then merges pairs of sorted pieces back together in sorted order. Guarantees O(n log n) in every case, at the cost of O(n) extra space for the merge buffers.",
+    pseudo:`merge_sort(a, lo, hi):
+  if lo >= hi: return
+  mid = (lo+hi)/2
+  merge_sort(a, lo, mid)
+  merge_sort(a, mid+1, hi)
+  merge(a, lo, mid, hi)`,
+    complexity:{best:"O(n log n)",avg:"O(n log n)",worst:"O(n log n)",space:"O(n)",stable:"Yes"}},
+
+  quick:{ name:"Quick Sort", cat:"Sorting", frames:framesQuick,
+    explain:"Also divide-and-conquer, but does the hard work during the split: it picks a pivot, partitions the array so everything smaller comes before it and everything larger after, then recurses on each side. In-place and typically the fastest general-purpose sort in practice, though a poor pivot choice degrades it to O(n²).",
+    pseudo:`quick_sort(a, lo, hi):
+  if lo < hi:
+    p = partition(a, lo, hi)
+    quick_sort(a, lo, p-1)
+    quick_sort(a, p+1, hi)`,
+    complexity:{best:"O(n log n)",avg:"O(n log n)",worst:"O(n²) — poor pivot choices",space:"O(log n)",stable:"No"}},
+
+  heap:{ name:"Heap Sort", cat:"Sorting", frames:framesHeap,
+    explain:"First rearranges the array into a max-heap (a binary tree where every parent is ≥ its children), then repeatedly swaps the root — the current maximum — to the end and re-heapifies the shrinking remainder. In-place with guaranteed O(n log n) worst case, though usually slower in practice than quicksort due to cache behavior.",
+    pseudo:`build max-heap from a
+for i in n-1..1:
+  swap(a[0], a[i])
+  heapify(a, i, 0)`,
+    complexity:{best:"O(n log n)",avg:"O(n log n)",worst:"O(n log n)",space:"O(1)",stable:"No"}},
+
+  linear_search:{ name:"Linear Search", cat:"Searching", needsTarget:true, frames:(arr,target)=>framesLinearSearch(arr,target),
+    explain:"Checks every element in order until it finds the target or reaches the end. Makes no assumptions about the data — works on unsorted arrays — but in the worst case has to look at everything.",
+    pseudo:`for i in 0..n-1:
+  if a[i] == target:
+    return i
+return -1`,
+    complexity:{best:"O(1) — target is first",avg:"O(n)",worst:"O(n)",space:"O(1)",stable:"—"}},
+
+  binary_search:{ name:"Binary Search", cat:"Searching", needsTarget:true, frames:(arr,target)=>framesBinarySearch(arr,target),
+    explain:"Requires a sorted array. Repeatedly checks the middle element of the current range: if it matches, done; if the target is smaller, discard the right half; if larger, discard the left half. Halving the search space each step gives logarithmic time.",
+    pseudo:`lo, hi = 0, n-1
+while lo <= hi:
+  mid = (lo+hi)/2
+  if a[mid] == target: return mid
+  elif a[mid] < target: lo = mid+1
+  else: hi = mid-1
+return -1`,
+    complexity:{best:"O(1) — target is the midpoint",avg:"O(log n)",worst:"O(log n)",space:"O(1)",stable:"—"}},
+
+  jump_search:{ name:"Jump Search", cat:"Searching", needsTarget:true, frames:(arr,target)=>framesJumpSearch(arr,target),
+    explain:"Requires a sorted array. Jumps ahead in fixed-size blocks of √n until it finds a block that could contain the target, then does a linear scan inside just that block. A middle ground between linear and binary search, useful when jumping backward is costly (e.g. slow disk seeks).",
+    pseudo:`step = sqrt(n)
+while a[min(step,n)-1] < target:
+  jump forward by step
+linear scan the identified block`,
+    complexity:{best:"O(1)",avg:"O(√n)",worst:"O(√n)",space:"O(1)",stable:"—"}},
+
+  exponential_search:{ name:"Exponential Search", cat:"Searching", needsTarget:true, frames:(arr,target)=>framesExponentialSearch(arr,target),
+    explain:"Requires a sorted array. Starts at index 1 and doubles the bound (1, 2, 4, 8…) until it finds a range that must contain the target, then runs binary search inside just that range. Particularly good for unbounded or very large sorted lists where the target is likely near the start.",
+    pseudo:`i = 1
+while a[i] <= target: i *= 2
+binary_search(a, target, i/2, min(i,n-1))`,
+    complexity:{best:"O(1)",avg:"O(log n)",worst:"O(log n)",space:"O(1)",stable:"—"}},
+
+  bst_build:{ name:"BST — Build (Insert)", cat:"Trees", renderMode:"tree", frames:(arr)=>framesBSTBuild(arr),
+    explain:"A Binary Search Tree keeps every node's left subtree smaller and right subtree larger. Inserting a new value means walking down from the root, going left or right based on comparisons, until an empty spot is found. No rebalancing is done, so a BST built from already-sorted input degenerates into a straight line (O(n) operations) — this is exactly the problem AVL and Red-Black trees solve.",
+    pseudo:`insert(root, val):
+  if root is empty: return new Node(val)
+  if val < root.val: root.left = insert(root.left, val)
+  elif val > root.val: root.right = insert(root.right, val)
+  return root`,
+    complexity:{best:"O(log n) — balanced tree",avg:"O(log n)",worst:"O(n) — degenerate/skewed tree",space:"O(n)",stable:"—"}},
+
+  bst_search:{ name:"BST — Search", cat:"Trees", renderMode:"tree", needsTarget:true, targetLabel:"Search for:", targetButtonLabel:"Search",
+    frames:(arr,target)=>framesBSTSearch(arr,target),
+    explain:"Starting at the root, compare the target to the current node: equal means found, smaller means go left, larger means go right. Each comparison eliminates an entire subtree, so search is fast on a balanced tree — but only as fast as the tree's height, which is why keeping trees balanced matters.",
+    pseudo:`search(root, target):
+  while root is not empty:
+    if target == root.val: return root
+    elif target < root.val: root = root.left
+    else: root = root.right
+  return not found`,
+    complexity:{best:"O(1) — target is the root",avg:"O(log n)",worst:"O(n) — degenerate tree",space:"O(1)",stable:"—"}},
+
+  bst_delete:{ name:"BST — Delete", cat:"Trees", renderMode:"tree", needsTarget:true, targetLabel:"Delete value:", targetButtonLabel:"Delete",
+    frames:(arr,target)=>framesBSTDelete(arr,target),
+    explain:"Deletion has three cases. A leaf is simply removed. A node with one child is replaced by that child. A node with two children is trickier: it's replaced by its inorder successor (the smallest value in its right subtree), and then that successor is deleted from its original spot — which is always a simpler case (it has at most one child).",
+    pseudo:`delete(root, val):
+  if val < root.val: root.left = delete(root.left, val)
+  elif val > root.val: root.right = delete(root.right, val)
+  else:
+    if root has ≤1 child: return that child (or None)
+    succ = min(root.right)
+    root.val = succ.val
+    root.right = delete(root.right, succ.val)
+  return root`,
+    complexity:{best:"O(log n) — balanced tree",avg:"O(log n)",worst:"O(n) — degenerate tree",space:"O(1)",stable:"—"}},
+
+  traverse_inorder:{ name:"Traversal — Inorder", cat:"Trees", renderMode:"tree", frames:(arr)=>framesTraversal(arr,'inorder'),
+    explain:"Visits left subtree, then the current node, then right subtree. On a BST this visits every value in ascending sorted order — a direct consequence of the BST ordering property.",
+    pseudo:`inorder(node):
+  if node: inorder(node.left); visit(node); inorder(node.right)`,
+    complexity:{best:"O(n)",avg:"O(n)",worst:"O(n)",space:"O(h) — recursion stack, h = height",stable:"—"}},
+
+  traverse_preorder:{ name:"Traversal — Preorder", cat:"Trees", renderMode:"tree", frames:(arr)=>framesTraversal(arr,'preorder'),
+    explain:"Visits the current node before its children (node, then left, then right). Useful for copying a tree or producing a prefix-style serialization that can rebuild the exact same tree shape.",
+    pseudo:`preorder(node):
+  if node: visit(node); preorder(node.left); preorder(node.right)`,
+    complexity:{best:"O(n)",avg:"O(n)",worst:"O(n)",space:"O(h)",stable:"—"}},
+
+  traverse_postorder:{ name:"Traversal — Postorder", cat:"Trees", renderMode:"tree", frames:(arr)=>framesTraversal(arr,'postorder'),
+    explain:"Visits both children before the current node (left, then right, then node). Useful when children must be processed before their parent — for example, deleting a tree from the leaves up, or evaluating an expression tree.",
+    pseudo:`postorder(node):
+  if node: postorder(node.left); postorder(node.right); visit(node)`,
+    complexity:{best:"O(n)",avg:"O(n)",worst:"O(n)",space:"O(h)",stable:"—"}},
+
+  traverse_levelorder:{ name:"Traversal — Level Order (BFS)", cat:"Trees", renderMode:"tree", frames:(arr)=>framesTraversal(arr,'levelorder'),
+    explain:"Visits nodes level by level, top to bottom, using a queue rather than recursion: dequeue a node, visit it, enqueue its children. This is breadth-first search applied to a tree, and it's the natural way to process a tree 'row by row'.",
+    pseudo:`level_order(root):
+  queue = [root]
+  while queue not empty:
+    node = queue.pop_front()
+    visit(node)
+    queue.push_back(node.left, node.right if present)`,
+    complexity:{best:"O(n)",avg:"O(n)",worst:"O(n)",space:"O(n) — widest level of the tree",stable:"—"}},
+
+  avl_insert:{ name:"AVL Tree — Insert", cat:"Trees", renderMode:"tree", frames:(arr)=>framesAVLInsert(arr),
+    explain:"A self-balancing BST: after every insertion, it walks back up from the new leaf to the root, and at each ancestor checks the balance factor (left height − right height). If it exceeds ±1, one of four rotations (LL, RR, LR, RL) restores balance. This guarantees O(log n) height at all times, unlike a plain BST which can degenerate into a line.",
+    pseudo:`insert(node, val):
+  ... standard BST insert ...
+  update height(node)
+  bf = balance_factor(node)
+  if bf > 1 and val < node.left.val: return rotate_right(node)      # LL
+  if bf < -1 and val > node.right.val: return rotate_left(node)     # RR
+  if bf > 1 and val > node.left.val: node.left = rotate_left(node.left); return rotate_right(node)   # LR
+  if bf < -1 and val < node.right.val: node.right = rotate_right(node.right); return rotate_left(node) # RL
+  return node`,
+    complexity:{best:"O(log n)",avg:"O(log n)",worst:"O(log n) — height always balanced",space:"O(log n) — recursion stack",stable:"—"}},
+
+  bfs:{ name:"Graph — BFS", cat:"Graphs", renderMode:"graph", usesGraph:true, needsStartNode:true, frames:(graph,start)=>framesBFS(graph,start),
+    explain:"Breadth-First Search explores a graph one 'layer' at a time: visit the start node, then all its direct neighbors, then all of their unvisited neighbors, and so on — using a queue to keep the order first-in-first-out. This guarantees the shortest path (by edge count) from the start node to every reachable node in an unweighted graph.",
+    pseudo:`bfs(graph, start):
+  visited = {start}; queue = [start]
+  while queue not empty:
+    node = queue.pop_front()
+    for neighbor in graph[node]:
+      if neighbor not in visited:
+        visited.add(neighbor); queue.push_back(neighbor)`,
+    complexity:{best:"O(V+E)",avg:"O(V+E)",worst:"O(V+E)",space:"O(V)",stable:"—"}},
+
+  dfs:{ name:"Graph — DFS", cat:"Graphs", renderMode:"graph", usesGraph:true, needsStartNode:true, frames:(graph,start)=>framesDFS(graph,start),
+    explain:"Depth-First Search dives as deep as possible down one path before backtracking: visit a node, then recurse into an unvisited neighbor, and only return to try other neighbors once that branch is fully explored. Natural for tasks like cycle detection, topological sorting, and exploring maze-like structures.",
+    pseudo:`dfs(graph, node, visited):
+  visited.add(node)
+  for neighbor in graph[node]:
+    if neighbor not in visited:
+      dfs(graph, neighbor, visited)`,
+    complexity:{best:"O(V+E)",avg:"O(V+E)",worst:"O(V+E)",space:"O(V) — recursion stack",stable:"—"}},
+
+  dijkstra:{ name:"Dijkstra's Shortest Path", cat:"Graphs", renderMode:"graph", usesGraph:true, needsStartNode:true, frames:(graph,start)=>framesDijkstra(graph,start),
+    explain:"Finds the shortest-distance path from a start node to every other node in a graph with non-negative edge weights. It repeatedly picks the unvisited node with the smallest known distance, 'relaxes' each of its edges (checks whether going through it gives a shorter path to the neighbor), and marks it visited. Once a node is visited its distance is final.",
+    pseudo:`dijkstra(graph, start):
+  dist[start] = 0; others = ∞
+  while unvisited nodes remain:
+    u = unvisited node with smallest dist
+    mark u visited
+    for (v, weight) in graph[u]:
+      if dist[u]+weight < dist[v]: dist[v] = dist[u]+weight`,
+    complexity:{best:"O((V+E) log V) — with a min-heap",avg:"O((V+E) log V)",worst:"O((V+E) log V)",space:"O(V)",stable:"—"}},
+
+  kruskal:{ name:"Kruskal's MST", cat:"Graphs", renderMode:"graph", usesGraph:true, needsStartNode:false, frames:(graph)=>framesKruskal(graph),
+    explain:"Builds a Minimum Spanning Tree — the cheapest set of edges connecting every node with no cycles — by greedily considering edges from lightest to heaviest, adding an edge only if it connects two previously-disconnected components. A Union-Find (Disjoint Set) structure tracks components and detects cycles in near-constant time per operation.",
+    pseudo:`kruskal(nodes, edges):
+  sort edges by weight ascending
+  dsu = DisjointSet(nodes)
+  for (u, v, weight) in edges:
+    if dsu.find(u) != dsu.find(v):
+      dsu.union(u, v); add (u,v) to MST`,
+    complexity:{best:"O(E log E)",avg:"O(E log E)",worst:"O(E log E) — dominated by the sort",space:"O(V)",stable:"—"}},
+};
+
+const SIDEBAR_STRUCTURE = [
+  {cat:"Sorting", items:["bubble","selection","insertion","merge","quick","heap"], open:true},
+  {cat:"Searching", items:["linear_search","binary_search","jump_search","exponential_search"], open:true},
+  {cat:"Arrays", items:[], soon:true},
+  {cat:"Linked Lists", items:[], soon:true},
+  {cat:"Stack", items:[], soon:true},
+  {cat:"Queue", items:[], soon:true},
+  {cat:"Hash Tables", items:[], soon:true},
+  {cat:"Trees", items:["bst_build","bst_search","bst_delete","traverse_inorder","traverse_preorder","traverse_postorder","traverse_levelorder","avl_insert"], open:true},
+  {cat:"Graphs", items:["bfs","dfs","dijkstra","kruskal"], open:true},
+  {cat:"Dynamic Programming", items:[], soon:true},
+  {cat:"Greedy", items:[], soon:true},
+  {cat:"Recursion", items:[], soon:true},
+  {cat:"Backtracking", items:[], soon:true},
+  {cat:"Divide & Conquer", items:[], soon:true},
+  {cat:"Strings", items:[], soon:true},
+];
+
+/* ============================= STATE ============================= */
+let state = {
+  currentAlgo:'bubble',
+  baseArray:[62,35,80,17,54,21,45,9,71,28],
+  target:45,
+  graph:null,
+  startNode:null,
+  frames:[],
+  idx:0,
+  playing:false,
+  timer:null,
+};
+
+/* ============================= SIDEBAR RENDER ============================= */
+function renderSidebar(filter=''){
+  const el = document.getElementById('sidebar');
+  el.innerHTML = '';
+  SIDEBAR_STRUCTURE.forEach(group=>{
+    const items = group.items.filter(key => !filter || CATALOG[key].name.toLowerCase().includes(filter.toLowerCase()));
+    if(filter && items.length===0 && !group.cat.toLowerCase().includes(filter.toLowerCase())) return;
+
+    const headWrap = document.createElement('div');
+    headWrap.className = 'px-3 pt-3 pb-1 flex items-center justify-between cat-head text-[11px] uppercase tracking-wider font-semibold';
+    headWrap.innerHTML = `<span>${group.cat}</span>` + (group.soon ? `<span class="badge">soon</span>` : `<span>${items.length}</span>`);
+    el.appendChild(headWrap);
+
+    if(group.soon){
+      const s = document.createElement('div');
+      s.className = 'soon px-3 pb-1 text-[12px]';
+      s.style.color='var(--text-dim)';
+      s.textContent = 'Coming in next milestone';
+      el.appendChild(s);
+      return;
+    }
+
+    items.forEach(key=>{
+      const d = document.createElement('div');
+      d.className = 'nav-item px-3 py-1.5 text-[13px]' + (key===state.currentAlgo?' active':'');
+      d.textContent = CATALOG[key].name;
+      d.onclick = ()=> selectAlgo(key);
+      el.appendChild(d);
+    });
+  });
+}
+document.getElementById('searchInput').oninput = (e)=> renderSidebar(e.target.value);
+
+/* ============================= TABS ============================= */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    ['explain','pseudo','python','complexity'].forEach(id=>{
+      document.getElementById('tab-'+id).classList.toggle('hidden', id!==t.dataset.tab);
+    });
+  };
+});
+
+/* ============================= RENDER RIGHT PANEL CONTENT ============================= */
+function renderPanelContent(){
+  const algo = CATALOG[state.currentAlgo];
+  document.getElementById('tab-explain').innerHTML = `<p>${algo.explain}</p>`;
+  document.getElementById('tab-pseudo').textContent = algo.pseudo;
+  const c = algo.complexity;
+  document.getElementById('tab-complexity').innerHTML = `
+    <div class="grid grid-cols-2 gap-3">
+      ${[['Best',c.best],['Average',c.avg],['Worst',c.worst],['Space',c.space],['Stable',c.stable]].map(([k,v])=>`
+        <div class="glass2 rounded-lg p-3">
+          <div class="text-[11px] uppercase tracking-wide" style="color:var(--text-dim)">${k}</div>
+          <div class="font-mono font-semibold mt-1">${v}</div>
+        </div>`).join('')}
+    </div>`;
+  const pyCode = document.getElementById('pyCode');
+  pyCode.textContent = PY[state.currentAlgo];
+  wrapPythonLines();
+  Prism.highlightElement(pyCode);
+}
+
+// Wrap each source line in a span so we can highlight the active one.
+function wrapPythonLines(){
+  const pyCode = document.getElementById('pyCode');
+  const lines = PY[state.currentAlgo].split('\n');
+  pyCode.innerHTML = lines.map((l,i)=>`<span class="pyline" data-line="${i+1}">${escapeHtml(l)||' '}</span>`).join('\n');
+}
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+document.getElementById('btnCopyPy').onclick = ()=>{
+  navigator.clipboard.writeText(PY[state.currentAlgo]);
+  const b=document.getElementById('btnCopyPy'); const t=b.textContent; b.textContent='Copied!'; setTimeout(()=>b.textContent=t,1000);
+};
+document.getElementById('btnDownloadPy').onclick = ()=>{
+  const blob = new Blob([PY[state.currentAlgo]], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download = state.currentAlgo+'_sort.py'; a.click();
+  URL.revokeObjectURL(url);
+};
+document.getElementById('pySearch').oninput = (e)=>{
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('#pyCode .pyline').forEach(span=>{
+    span.style.background = (q && span.textContent.toLowerCase().includes(q)) ? 'rgba(242,201,76,.18)' : '';
+  });
+};
+
+/* ============================= VISUALIZATION RENDER ============================= */
+function renderBarsFrame(frame){
+  const wrap = document.getElementById('canvasWrap');
+  wrap.classList.remove('items-start'); wrap.classList.add('items-end');
+  const arr = frame.array;
+  const max = Math.max(...arr, 1);
+  const w = 100/arr.length;
+
+  wrap.innerHTML = '';
+  arr.forEach((val,i)=>{
+    const bar = document.createElement('div');
+    let bg = 'linear-gradient(180deg,var(--accent2),var(--accent))';
+    if(frame.sorted && frame.sorted.includes(i)) bg = 'var(--good)';
+    if(frame.range && (i<frame.range[0] || i>frame.range[1])) bg = 'var(--panel2)';
+    if(frame.compare && frame.compare.includes(i)) bg = 'var(--warn)';
+    if(frame.swap && frame.swap.includes(i)) bg = 'var(--danger)';
+    if(frame.pivot===i) bg = '#c084fc';
+    if(frame.found && frame.found.includes(i)) bg = 'var(--good)';
+    bar.className = 'bar rounded-t-md relative flex items-end justify-center';
+    bar.style.cssText = `width:${w}%; max-width:52px; height:${(val/max*100)}%; background:${bg};`;
+    const label = document.createElement('span');
+    label.className='font-mono text-[10px] pb-1';
+    label.style.color = '#0b0d12';
+    label.textContent = val;
+    bar.appendChild(label);
+    wrap.appendChild(bar);
+  });
+}
+
+function renderFrame(){
+  const frame = state.frames[state.idx];
+  const mode = CATALOG[state.currentAlgo].renderMode || 'bars';
+  if(mode==='tree') renderTreeFrame(frame);
+  else if(mode==='graph') renderGraphFrame(frame);
+  else renderBarsFrame(frame);
+
+  document.getElementById('frameCounter').textContent = `Step ${state.idx} / ${state.frames.length-1}`;
+  const noteEl = document.getElementById('stepNote');
+  if(frame.note){ noteEl.style.display='block'; noteEl.textContent = frame.note; } else { noteEl.style.display='none'; }
+
+  document.querySelectorAll('#pyCode .pyline').forEach(s=>s.classList.remove('active'));
+  const activeLine = document.querySelector(`#pyCode .pyline[data-line="${frame.pyLine}"]`);
+  if(activeLine){ activeLine.classList.add('active'); activeLine.scrollIntoView({block:'center', behavior:'smooth'}); }
+
+  document.getElementById('btnPrev').disabled = state.idx===0;
+  document.getElementById('btnNext').disabled = state.idx===state.frames.length-1;
+}
+
+/* ============================= PLAYBACK CONTROLS ============================= */
+function goTo(i){
+  state.idx = Math.max(0, Math.min(state.frames.length-1, i));
+  renderFrame();
+}
+function stepNext(){
+  if(state.idx>=state.frames.length-1){ pause(); return; }
+  goTo(state.idx+1);
+}
+function stepPrev(){ pause(); goTo(state.idx-1); }
+
+function play(){
+  if(state.idx>=state.frames.length-1) goTo(0);
+  state.playing = true;
+  document.getElementById('playIcon').innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+  document.getElementById('playLabel').textContent = 'Pause';
+  const speed = document.getElementById('speedSlider').value;
+  const delay = 850 - speed*75;
+  state.timer = setInterval(()=>{
+    if(state.idx>=state.frames.length-1){ pause(); return; }
+    stepNext();
+  }, Math.max(60,delay));
+}
+function pause(){
+  state.playing=false;
+  clearInterval(state.timer);
+  document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+  document.getElementById('playLabel').textContent = 'Play';
+}
+document.getElementById('btnPlay').onclick = ()=> state.playing ? pause() : play();
+document.getElementById('btnNext').onclick = ()=>{ pause(); stepNext(); };
+document.getElementById('btnPrev').onclick = stepPrev;
+document.getElementById('btnReset').onclick = ()=>{ pause(); rebuildFrames(); };
+document.getElementById('speedSlider').oninput = ()=>{ if(state.playing){ pause(); play(); } };
+
+/* ============================= INPUT CONTROLS ============================= */
+document.getElementById('btnRandom').onclick = ()=>{
+  pause();
+  const n = 8 + Math.floor(Math.random()*6);
+  state.baseArray = Array.from({length:n}, ()=> 5+Math.floor(Math.random()*95));
+  rebuildFrames();
+};
+document.getElementById('btnCustomToggle').onclick = ()=>{
+  document.getElementById('customBar').classList.toggle('hidden');
+  document.getElementById('customBar').classList.toggle('flex');
+};
+document.getElementById('btnCustomApply').onclick = ()=>{
+  const raw = document.getElementById('customInput').value;
+  const nums = raw.split(',').map(s=>parseInt(s.trim(),10)).filter(n=>!isNaN(n) && n>0 && n<=999);
+  if(nums.length<2){ alert('Enter at least 2 comma-separated positive numbers.'); return; }
+  pause();
+  state.baseArray = nums.slice(0,20);
+  rebuildFrames();
+};
+
+/* ============================= ALGO SWITCH / REBUILD ============================= */
+function ensureGraph(){
+  if(!state.graph){
+    state.graph = genConnectedGraph(6 + Math.floor(Math.random()*4));
+    state.startNode = state.graph.nodes[0].id;
+  }
+}
+function populateStartNodeSelect(){
+  const sel = document.getElementById('startNodeSelect');
+  sel.innerHTML = '';
+  state.graph.nodes.forEach(n=>{
+    const opt = document.createElement('option');
+    opt.value = n.id; opt.textContent = n.label;
+    if(n.id===state.startNode) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+document.getElementById('btnNewGraph').onclick = ()=>{
+  pause();
+  state.graph = genConnectedGraph(6 + Math.floor(Math.random()*4));
+  state.startNode = state.graph.nodes[0].id;
+  populateStartNodeSelect();
+  rebuildFrames();
+};
+document.getElementById('startNodeSelect').onchange = (e)=>{
+  pause();
+  state.startNode = e.target.value;
+  rebuildFrames();
+};
+
+function rebuildFrames(){
+  const algo = CATALOG[state.currentAlgo];
+  if(algo.usesGraph){
+    ensureGraph();
+    state.frames = algo.needsStartNode ? algo.frames(state.graph, state.startNode) : algo.frames(state.graph);
+  } else if(algo.needsTarget){
+    state.frames = algo.frames(state.baseArray, state.target);
+    document.getElementById('targetHint').textContent = `in {${state.baseArray.join(', ')}}`;
+  } else {
+    state.frames = algo.frames(state.baseArray);
+  }
+  state.idx = 0;
+  renderFrame();
+}
+function selectAlgo(key){
+  pause();
+  state.currentAlgo = key;
+  const algo = CATALOG[key];
+  document.getElementById('algoTitle').textContent = algo.name;
+  const subtitleKind = algo.usesGraph ? 'graph algorithm' : (algo.renderMode==='tree' ? 'tree structure' : (algo.needsTarget ? 'search' : 'comparison-based'));
+  document.getElementById('algoSub').textContent = `${algo.cat} · ${subtitleKind}`;
+  renderSidebar(document.getElementById('searchInput').value);
+  renderPanelContent();
+
+  const targetBar = document.getElementById('targetBar');
+  const graphBar = document.getElementById('graphBar');
+  const customToggleBtn = document.getElementById('btnCustomToggle');
+  const randomBtn = document.getElementById('btnRandom');
+
+  targetBar.classList.add('hidden'); targetBar.classList.remove('flex');
+  graphBar.classList.add('hidden'); graphBar.classList.remove('flex');
+  customToggleBtn.classList.remove('hidden');
+  randomBtn.classList.remove('hidden');
+  document.getElementById('customBar').classList.add('hidden');
+  document.getElementById('customBar').classList.remove('flex');
+
+  if(algo.usesGraph){
+    ensureGraph();
+    graphBar.classList.remove('hidden'); graphBar.classList.add('flex');
+    customToggleBtn.classList.add('hidden');
+    randomBtn.classList.add('hidden');
+    const startLabel = document.getElementById('graphStartLabel');
+    const startSelect = document.getElementById('startNodeSelect');
+    if(algo.needsStartNode){ startLabel.style.display=''; startSelect.style.display=''; }
+    else { startLabel.style.display='none'; startSelect.style.display='none'; }
+    populateStartNodeSelect();
+  } else if(algo.needsTarget){
+    targetBar.classList.remove('hidden'); targetBar.classList.add('flex');
+    document.getElementById('targetInput').value = state.target;
+    document.getElementById('targetLabelText').textContent = algo.targetLabel || 'Search for:';
+    document.getElementById('btnTargetApply').textContent = algo.targetButtonLabel || 'Search';
+    customToggleBtn.textContent = algo.renderMode==='tree' ? 'Custom Sequence' : 'Custom Array';
+  } else {
+    customToggleBtn.textContent = algo.renderMode==='tree' ? 'Custom Sequence' : 'Custom Input';
+  }
+  rebuildFrames();
+}
+
+document.getElementById('btnTargetApply').onclick = ()=>{
+  const v = parseInt(document.getElementById('targetInput').value, 10);
+  if(isNaN(v)){ alert('Enter a numeric target value.'); return; }
+  pause();
+  state.target = v;
+  rebuildFrames();
+};
+
+/* ============================= INIT ============================= */
+renderSidebar();
+renderPanelContent();
+rebuildFrames();
+</script>
+</body>
+</html>
