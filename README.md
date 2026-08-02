@@ -34,9 +34,40 @@ Interactive visualizations of algorithms and data structures to help students an
 - **Sorting**: Generate a random array or enter custom values, then press Play to visualize the sorting process. Adjust speed to slow down or speed up the animation.
 - **Graphs**: Create a new random graph, set a start node, and run search algorithms to see traversal in action.
 
+## Implemented Algorithms
+
+The visualizer currently covers **35 algorithms** across **9 categories**, each with step-by-step animation, pseudocode, an explanation, complexity analysis, and a matching Python reference implementation.
+
+| Category | Algorithms |
+|---|---|
+| Sorting | Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort, Heap Sort |
+| Searching | Linear Search, Binary Search, Jump Search, Exponential Search |
+| Arrays | Two-Pointer Technique, Sliding Window (Max Sum Subarray), Kadane's Algorithm, Prefix Sums |
+| Linked Lists | Insert, Delete, Reverse, Cycle Detection (Floyd's Tortoise and Hare) |
+| Stack | Balanced Parentheses, Next Greater Element (Monotonic Stack) |
+| Queue | FIFO Enqueue/Dequeue, Circular Queue |
+| Hash Tables | Insert / Search / Delete with Collision Handling via Chaining |
+| Trees | BST Build, BST Search, BST Delete, Inorder/Preorder/Postorder/Level-order Traversal, AVL Insert (with rotations) |
+| Graphs | BFS, DFS, Dijkstra's Shortest Path, Kruskal's MST |
+
+## Pending / Roadmap
+
+The following are planned but not yet implemented:
+
+| Category | Planned algorithms |
+|---|---|
+| Dynamic Programming | Knapsack, Longest Common Subsequence (LCS), Longest Increasing Subsequence (LIS), Coin Change, Edit Distance |
+| Greedy | Activity Selection, Fractional Knapsack, Huffman Coding |
+| Recursion | Factorial, Fibonacci, Tower of Hanoi |
+| Backtracking | N-Queens, Sudoku Solver, Rat in a Maze, Word Search |
+| Divide & Conquer | Closest Pair of Points, Matrix Exponentiation |
+| Strings | KMP, Rabin-Karp, Z-Algorithm, Trie-based Search |
+| Advanced Structures | Tries, Segment Trees, Fenwick Trees (BIT), Red-Black Trees, Union-Find (standalone) |
+| Advanced Graphs | Bellman-Ford, Floyd-Warshall, A* Search, Prim's MST, Kosaraju's / Tarjan's (SCC) |
+
 ## Technologies
 
-- HTML, CSS, JavaScript
+- HTML, CSS, Tailwind CSS, JavaScript
 - No external frameworks required (vanilla JS)
 
 ## Contributing
