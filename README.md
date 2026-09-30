@@ -7,7 +7,7 @@ Interactive visualizations of algorithms and data structures to help students an
 - **Sorting Visualizations** – Watch algorithms like Bubble Sort operate step by step on arrays.
 - **Graph Visualizations** – Explore graph structures, perform searches, and generate random graphs.
 - **Custom Input** – Enter your own data to see how algorithms behave on specific cases.
-- **Interactive Controls** – Play, pause, and set speed from 0.05x to 4x with a slider or a custom value to follow each operation closely.
+- **Interactive Controls** – Play, pause, and set the step delay from 0.01s to 10s with a synced slider or a custom value to follow each operation closely.
 - **Randomized Examples** – Generate new random arrays and graphs for endless practice.
 - **Responsive Layout** – Works on phones, tablets, and desktops, with slide-in drawers for the algorithm list and the explanation, pseudocode, Python, and complexity panel.
 - **Hover Tooltips** – Hover (or tap) any bar, node, cell, bucket, or slot to see its index and value, and hover any icon-only button to see its label.
@@ -34,7 +34,7 @@ Interactive visualizations of algorithms and data structures to help students an
 
 ## Usage
 
-- **Sorting**: Generate a random array or enter custom values, then press Play to visualize the sorting process. Adjust speed between 0.05x and 4x to slow down or speed up the animation.
+- **Sorting**: Generate a random array or enter custom values, then press Play to visualize the sorting process. Adjust the step delay between 0.01s and 10s to slow down or speed up the animation.
 - **Graphs**: Create a new random graph, set a start node, and run search algorithms to see traversal in action.
 
 ## Implemented Algorithms

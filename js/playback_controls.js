@@ -20,11 +20,11 @@ function play(){
   switchToIterationTab();
   document.getElementById('playIcon').className = 'fa-solid fa-pause';
   document.getElementById('playLabel').textContent = 'Pause';
-  const delay = 400/document.getElementById('speedInput').value;
+  const delay = document.getElementById('speedSlider').value*1000;
   state.timer = setInterval(()=>{
     if(state.idx>=state.frames.length-1){ pause(); return; }
     stepNext();
-  }, Math.max(60,delay));
+  }, delay);
 }
 function pause(){
   state.playing=false;
@@ -37,11 +37,13 @@ document.getElementById('btnPlay').onclick = ()=> state.playing ? pause() : play
 document.getElementById('btnNext').onclick = ()=>{ pause(); stepNext(); };
 document.getElementById('btnPrev').onclick = stepPrev;
 document.getElementById('btnReset').onclick = ()=>{ pause(); rebuildFrames(); };
-const setSpeed = (v)=>{
-  document.getElementById('speedInput').value = document.getElementById('speedSlider').value = Math.min(4, Math.max(0.05, parseFloat(v)||1));
+const setSpeed = ({target:t})=>{
+  const s = document.getElementById('speedSlider'), i = document.getElementById('speedInput');
+  if(t.value==='') return;
+  s.value = t.value;
+  if(t===s || (+i.value && +i.value!==+s.value)) i.value = s.value;
   if(state.playing){ pause(); play(); }
 };
-document.getElementById('speedSlider').oninput = ()=> setSpeed(document.getElementById('speedSlider').value);
-document.getElementById('speedInput').onchange = ()=> setSpeed(document.getElementById('speedInput').value);
+document.getElementById('speedSlider').oninput = document.getElementById('speedInput').oninput = setSpeed;
 
 export { goTo, stepNext, stepPrev, play, pause };

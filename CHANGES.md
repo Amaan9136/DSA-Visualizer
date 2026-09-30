@@ -63,3 +63,7 @@ A chronological record of the development and changes made to DSA Visualizer.
 * Added hover/focus tooltips to all icon-only buttons (menu, details, theme, GitHub, reset, previous, next, modal close) using `data-tip`, styled in `styles.css`.
 * Replaced the 1-10 speed slider with a wider 0.05x-4x slider and a synced numeric input for custom multipliers, defaulting to 1x (`js/playback_controls.js`, `index.html`).
 * Updated `README.md` for the new speed range and button tooltips.
+
+### Synced Step Delay Control
+* Switched the speed slider and custom input to a step delay from 0.01s to 10s; out-of-range custom values snap to the nearest bound.
+* Slider and input now update each other and apply the change immediately on `input` instead of `change` (`js/playback_controls.js`, `index.html`).
