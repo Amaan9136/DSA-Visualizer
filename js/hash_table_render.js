@@ -17,6 +17,7 @@ function renderHashTableFrame(frame){
     const bucketBox = document.createElement('div');
     bucketBox.className = 'glass2 rounded-md flex items-center gap-1 px-2 py-1.5 flex-1 flex-wrap min-h-[34px]';
     bucketBox.style.cssText = h.bucket===i ? 'border:1.5px solid var(--warn)' : 'border:1px solid var(--border)';
+    bucketBox.dataset.tip = `Bucket ${i} · ${chain.length} item(s)`;
     if(chain.length===0){
       const dash = document.createElement('span');
       dash.className='font-mono text-[11px]'; dash.style.color='var(--text-dim)'; dash.textContent='—';
@@ -30,6 +31,7 @@ function renderHashTableFrame(frame){
       pill.className = 'rounded px-2 py-0.5 font-mono text-[11px]';
       pill.style.cssText = `background:${bg}; border:1px solid var(--border); color:${bg==='var(--panel)'?'var(--text)':'#0b0d12'};`;
       pill.textContent = `${entry.key}:${entry.value}`;
+      pill.dataset.tip = `Bucket ${i} · Chain position ${j} · key "${entry.key}" → ${entry.value}`;
       bucketBox.appendChild(pill);
       if(j<chain.length-1){
         const arrow = document.createElement('span');

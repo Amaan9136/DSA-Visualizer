@@ -18,7 +18,7 @@ function play(){
   if(state.idx>=state.frames.length-1) goTo(0);
   state.playing = true;
   switchToIterationTab();
-  document.getElementById('playIcon').innerHTML = '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>';
+  document.getElementById('playIcon').className = 'fa-solid fa-pause';
   document.getElementById('playLabel').textContent = 'Pause';
   const speed = document.getElementById('speedSlider').value;
   const delay = 850 - speed*75;
@@ -30,7 +30,7 @@ function play(){
 function pause(){
   state.playing=false;
   clearInterval(state.timer);
-  document.getElementById('playIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+  document.getElementById('playIcon').className = 'fa-solid fa-play';
   document.getElementById('playLabel').textContent = 'Play';
   syncActiveStep();
 }

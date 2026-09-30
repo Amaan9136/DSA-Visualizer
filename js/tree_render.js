@@ -55,6 +55,7 @@ function renderTreeFrame(frame){
     if(h.deleted===node.id) fill = 'var(--danger)';
     if(h.rotated===node.id) fill = '#c084fc';
     const g = svgEl('g',{});
+    g.setAttribute('data-tip', `Node ${node.val} · Depth ${p.depth}`);
     g.appendChild(svgEl('circle',{cx:p.px,cy:p.py,r:19,fill,stroke:'var(--border)','stroke-width':1.5}));
     const t = svgEl('text',{x:p.px,y:p.py+4,'text-anchor':'middle','font-size':12,'font-family':'JetBrains Mono, monospace',fill:'#0b0d12','font-weight':700});
     t.textContent = node.val;

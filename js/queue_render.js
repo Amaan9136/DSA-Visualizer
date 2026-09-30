@@ -19,6 +19,7 @@ function renderQueueFrame(frame){
       if(h.rear===i) fill='var(--accent)';
       if(h.dequeuedSlot===i) fill='var(--danger)';
       const g = svgEl('g',{});
+      g.setAttribute('data-tip', `Slot ${i} · ${val===null?'empty':'Value '+val}${i===frame.front&&frame.size>0?' · front':''}`);
       g.appendChild(svgEl('circle',{cx:px,cy:py,r:22,fill,stroke:'var(--border)','stroke-width':1.5}));
       const t = svgEl('text',{x:px,y:py+4,'text-anchor':'middle','font-size':12,'font-family':'JetBrains Mono, monospace',fill:'#0b0d12','font-weight':700});
       t.textContent = val===null?'·':val;
@@ -48,6 +49,7 @@ function renderQueueFrame(frame){
     cell.className = 'rounded-md flex items-center justify-center font-mono font-bold text-[15px]';
     cell.style.cssText = `width:46px; height:40px; background:${bg}; color:#0b0d12;`;
     cell.textContent = val;
+    cell.dataset.tip = `Position ${i} · Value ${val}${i===0?' · front':''}${i===queue.length-1?' · rear':''}`;
     cellWrap.appendChild(cell);
     const lbl = document.createElement('div');
     lbl.className = 'text-[10px] font-mono'; lbl.style.color='var(--text-dim)';

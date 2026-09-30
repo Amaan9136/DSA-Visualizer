@@ -130,4 +130,37 @@ function framesTernarySearch(arrIn, target){
   return frames;
 }
 
-export { framesLinearSearch, framesBinarySearch, framesJumpSearch, framesExponentialSearch, framesInterpolationSearch, framesTernarySearch };
+function framesFibonacciSearch(arrIn, target){
+  const arr=[...arrIn].sort((a,b)=>a-b), frames=[], n=arr.length;
+  frames.push({array:[...arr], note:`Array sorted. Searching for target = ${target} using Fibonacci numbers to pick probe positions.`, pyLine:1});
+  let fib2=0, fib1=1, fib=1;
+  while(fib<n){ fib2=fib1; fib1=fib; fib=fib2+fib1; }
+  frames.push({array:[...arr], note:`Smallest Fibonacci number ≥ ${n} is ${fib} (previous ${fib1}, before that ${fib2}).`, pyLine:8});
+  let offset=-1;
+  while(fib>1){
+    const i=Math.min(offset+fib2,n-1);
+    frames.push({array:[...arr], range:[offset+1,Math.min(offset+fib,n-1)], compare:[i], note:`Probe index ${i} = min(offset ${offset} + ${fib2}, ${n-1}): a[${i}]=${arr[i]}`, pyLine:10});
+    if(arr[i]<target){
+      fib=fib1; fib1=fib2; fib2=fib-fib1; offset=i;
+      frames.push({array:[...arr], range:[offset+1,Math.min(offset+fib,n-1)], note:`a[${i}]=${arr[i]} < ${target} — drop the left part, move offset to ${offset}`, pyLine:12});
+    } else if(arr[i]>target){
+      const nf=fib2, nf1=fib1-fib2, nf2=2*fib2-fib1;
+      fib=nf; fib1=nf1; fib2=nf2;
+      frames.push({array:[...arr], range:[offset+1,Math.min(offset+fib,n-1)], note:`a[${i}]=${arr[i]} > ${target} — drop the right part, shrink Fibonacci step`, pyLine:15});
+    } else {
+      frames.push({array:[...arr], found:[i], note:`Found ${target} at index ${i}!`, pyLine:17});
+      return frames;
+    }
+  }
+  if(fib1 && offset+1<n){
+    frames.push({array:[...arr], compare:[offset+1], note:`Last candidate: check a[${offset+1}]=${arr[offset+1]}`, pyLine:18});
+    if(arr[offset+1]===target){
+      frames.push({array:[...arr], found:[offset+1], note:`Found ${target} at index ${offset+1}!`, pyLine:19});
+      return frames;
+    }
+  }
+  frames.push({array:[...arr], note:`Target ${target} not found.`, pyLine:20});
+  return frames;
+}
+
+export { framesLinearSearch, framesBinarySearch, framesJumpSearch, framesExponentialSearch, framesInterpolationSearch, framesTernarySearch, framesFibonacciSearch };

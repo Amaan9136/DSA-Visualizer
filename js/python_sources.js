@@ -585,6 +585,54 @@ cocktail:`def cocktail_shaker_sort(arr):
         lo += 1
     return arr`,
 
+comb:`def comb_sort(arr):
+    n = len(arr)
+    gap = n
+    swapped = True
+    while gap > 1 or swapped:
+        gap = max(1, int(gap / 1.3))
+        swapped = False
+        for i in range(n - gap):
+            if arr[i] > arr[i + gap]:
+                arr[i], arr[i + gap] = arr[i + gap], arr[i]
+                swapped = True
+    return arr`,
+
+gnome:`def gnome_sort(arr):
+    i = 0
+    while i < len(arr):
+        if i == 0 or arr[i] >= arr[i - 1]:
+            i += 1
+        else:
+            arr[i], arr[i - 1] = arr[i - 1], arr[i]
+            i -= 1
+    return arr`,
+
+counting:`def counting_sort(arr):
+    max_val = max(arr)
+    count = [0] * (max_val + 1)
+    for x in arr:
+        count[x] += 1
+    idx = 0
+    for v in range(max_val + 1):
+        while count[v] > 0:
+            arr[idx] = v
+            idx += 1
+            count[v] -= 1
+    return arr`,
+
+odd_even:`def odd_even_sort(arr):
+    n = len(arr)
+    is_sorted = False
+    while not is_sorted:
+        is_sorted = True
+        for start in (1, 0):
+            for i in range(start, n - 1, 2):
+                if arr[i] > arr[i + 1]:
+                    arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                    is_sorted = False
+    return arr`,
+
 interpolation_search:`def interpolation_search(arr, target):
     lo, hi = 0, len(arr) - 1
     while lo <= hi and arr[lo] <= target <= arr[hi]:
@@ -615,6 +663,27 @@ ternary_search:`def ternary_search(arr, target):
             lo = m2 + 1
         else:
             lo, hi = m1 + 1, m2 - 1
+    return -1`,
+
+fibonacci_search:`def fibonacci_search(arr, target):
+    n = len(arr)
+    fib2, fib1 = 0, 1
+    fib = fib2 + fib1
+    while fib < n:
+        fib2, fib1 = fib1, fib
+        fib = fib2 + fib1
+    offset = -1
+    while fib > 1:
+        i = min(offset + fib2, n - 1)
+        if arr[i] < target:
+            fib, fib1, fib2 = fib1, fib2, fib1 - fib2
+            offset = i
+        elif arr[i] > target:
+            fib, fib1, fib2 = fib2, fib1 - fib2, 2 * fib2 - fib1
+        else:
+            return i
+    if fib1 and offset + 1 < n and arr[offset + 1] == target:
+        return offset + 1
     return -1`
 };
 

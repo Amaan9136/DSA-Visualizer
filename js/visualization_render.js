@@ -7,6 +7,7 @@ import { renderLinkedListFrame } from './linked_list_render.js';
 import { renderQueueFrame } from './queue_render.js';
 import { renderStackFrame } from './stack_render.js';
 import { state } from './state.js';
+import { refreshTip } from './tooltip.js';
 import { renderTreeFrame } from './tree_render.js';
 
 function renderBarsFrame(frame){
@@ -22,6 +23,7 @@ function renderBarsFrame(frame){
     const barWrap = document.createElement('div');
     barWrap.className = 'relative flex flex-col items-center justify-end';
     barWrap.style.cssText = `width:${w}%; max-width:52px; height:100%;`;
+    barWrap.dataset.tip = `Index ${i} · Value ${val}`;
     const bar = document.createElement('div');
     let bg = 'linear-gradient(180deg,var(--accent2),var(--accent))';
     if(frame.sorted && frame.sorted.includes(i)) bg = 'var(--good)';
@@ -65,6 +67,7 @@ function renderBarsFrame(frame){
       cell.className = 'rounded px-1.5 py-0.5 font-mono text-[10px]';
       cell.style.cssText = `background:${bg}; border:1px solid var(--border); color:var(--text);`;
       cell.textContent = val;
+      cell.dataset.tip = `prefix[${i}] = ${val}`;
       strip.appendChild(cell);
     });
     document.getElementById('canvasWrap').appendChild(strip);
@@ -81,6 +84,7 @@ function renderFrame(){
   else if(mode==='queue') renderQueueFrame(frame);
   else if(mode==='hashtable') renderHashTableFrame(frame);
   else renderBarsFrame(frame);
+  refreshTip();
 
   document.getElementById('frameCounter').textContent = `Step ${state.idx} / ${state.frames.length-1}`;
   const noteEl = document.getElementById('stepNote');

@@ -4,8 +4,8 @@ import { framesBFS, framesDFS, framesDijkstra, framesKruskal } from './graph_alg
 import { framesHashTable, parseHashOpsString } from './hash_table_algorithms.js';
 import { framesLLCycleDetect, framesLLDelete, framesLLInsert, framesLLReverse } from './linked_list_algorithms.js';
 import { framesCircularQueue, framesQueueFIFO, parseOpsString } from './queue_algorithms.js';
-import { framesBinarySearch, framesExponentialSearch, framesInterpolationSearch, framesJumpSearch, framesLinearSearch, framesTernarySearch } from './searching_algorithms.js';
-import { framesBubble, framesCocktail, framesHeap, framesInsertion, framesMerge, framesQuick, framesSelection, framesShell } from './sorting_algorithms.js';
+import { framesBinarySearch, framesExponentialSearch, framesFibonacciSearch, framesInterpolationSearch, framesJumpSearch, framesLinearSearch, framesTernarySearch } from './searching_algorithms.js';
+import { framesBubble, framesCocktail, framesComb, framesCounting, framesGnome, framesHeap, framesInsertion, framesMerge, framesOddEven, framesQuick, framesSelection, framesShell } from './sorting_algorithms.js';
 import { framesBalancedParens, framesNextGreaterElement } from './stack_algorithms.js';
 import { framesAVLInsert, framesBSTBuild, framesBSTDelete, framesBSTSearch, framesTraversal } from './tree_algorithms.js';
 
@@ -239,6 +239,48 @@ while swapped and lo < hi:
   lo += 1`,
     complexity:{best:"O(n) — already sorted",avg:"O(n²)",worst:"O(n²)",space:"O(1)",stable:"Yes"}},
 
+  comb:{ name:"Comb Sort", cat:"Sorting", frames:framesComb,
+    explain:"An improved bubble sort that compares elements far apart first and shrinks the gap by a factor of about 1.3 each round. Large gaps quickly move small values that sit near the end of the array (\"turtles\") toward the front, so by the time the gap reaches 1 the array is almost sorted and the final bubble-style pass has little work left.",
+    pseudo:`gap = n; swapped = true
+while gap > 1 or swapped:
+  gap = max(1, floor(gap / 1.3))
+  swapped = false
+  for i in 0..n-gap-1:
+    if a[i] > a[i+gap]:
+      swap(a[i], a[i+gap]); swapped = true`,
+    complexity:{best:"O(n log n)",avg:"About O(n²/2^p) for p increments — often near O(n log n) in practice",worst:"O(n²)",space:"O(1)",stable:"No"}},
+
+  gnome:{ name:"Gnome Sort", cat:"Sorting", frames:framesGnome,
+    explain:"Works like a garden gnome sorting flower pots: look at the pot next to you and the one before it. If they are in order, step forward; if not, swap them and step back one place. When the gnome reaches the end of the row, every pot is in order. Behaves like insertion sort but uses swaps instead of shifting.",
+    pseudo:`i = 0
+while i < n:
+  if i == 0 or a[i] >= a[i-1]: i += 1
+  else:
+    swap(a[i], a[i-1]); i -= 1`,
+    complexity:{best:"O(n) — already sorted",avg:"O(n²)",worst:"O(n²)",space:"O(1)",stable:"Yes"}},
+
+  counting:{ name:"Counting Sort", cat:"Sorting", frames:framesCounting,
+    explain:"A non-comparison sort for small non-negative integers. It first counts how many times each value occurs in a table indexed by value, then walks the table from smallest to largest and writes each value back as many times as it was counted. Runs in linear time when the value range k is not much larger than n, but wastes memory when k is huge.",
+    pseudo:`max_val = max(a)
+count = [0] * (max_val + 1)
+for x in a: count[x] += 1
+idx = 0
+for v in 0..max_val:
+  while count[v] > 0:
+    a[idx] = v; idx += 1; count[v] -= 1`,
+    complexity:{best:"O(n + k)",avg:"O(n + k)",worst:"O(n + k) — k is the value range",space:"O(k)",stable:"Yes — when written as a stable prefix-sum variant; this simplified version rewrites values"}},
+
+  odd_even:{ name:"Odd-Even Sort", cat:"Sorting", frames:framesOddEven,
+    explain:"A parallel-friendly cousin of bubble sort that alternates two phases. The odd phase compares and swaps the pairs (1,2), (3,4), …; the even phase compares the pairs (0,1), (2,3), …. Pairs in one phase never overlap, so on parallel hardware they can all be processed at once. It stops after a full round with no swaps.",
+    pseudo:`sorted = false
+while not sorted:
+  sorted = true
+  for start in (1, 0):
+    for i in start..n-2 step 2:
+      if a[i] > a[i+1]:
+        swap(a[i], a[i+1]); sorted = false`,
+    complexity:{best:"O(n) — already sorted",avg:"O(n²)",worst:"O(n²)",space:"O(1)",stable:"Yes"}},
+
   linear_search:{ name:"Linear Search", cat:"Searching", needsTarget:true, frames:(arr,target)=>framesLinearSearch(arr,target),
     explain:"Checks every element in order until it finds the target or reaches the end. Makes no assumptions about the data — works on unsorted arrays — but in the worst case has to look at everything.",
     pseudo:`for i in 0..n-1:
@@ -294,6 +336,18 @@ while lo <= hi:
   elif target > a[m2]: lo = m2 + 1
   else: lo, hi = m1 + 1, m2 - 1`,
     complexity:{best:"O(1)",avg:"O(log₃ n)",worst:"O(log₃ n)",space:"O(1)",stable:"—"}},
+
+  fibonacci_search:{ name:"Fibonacci Search", cat:"Searching", needsTarget:true, frames:(arr,target)=>framesFibonacciSearch(arr,target),
+    explain:"Requires a sorted array. Like binary search it discards part of the range each step, but it picks probe positions using consecutive Fibonacci numbers instead of halving, so it only needs addition and subtraction — no division. The range is split into two unequal parts whose sizes are Fibonacci numbers, and the search continues in the part that can hold the target.",
+    pseudo:`find smallest Fibonacci fib >= n  (fib2, fib1 are the two before it)
+offset = -1
+while fib > 1:
+  i = min(offset + fib2, n-1)
+  if a[i] < target: step Fibonacci down once; offset = i
+  elif a[i] > target: step Fibonacci down twice
+  else: return i
+check a[offset+1] as the last candidate`,
+    complexity:{best:"O(1)",avg:"O(log n)",worst:"O(log n)",space:"O(1)",stable:"—"}},
 
   bst_build:{ name:"BST — Build (Insert)", cat:"Trees", renderMode:"tree", frames:(arr)=>framesBSTBuild(arr),
     explain:"A Binary Search Tree keeps every node's left subtree smaller and right subtree larger. Inserting a new value means walking down from the root, going left or right based on comparisons, until an empty spot is found. No rebalancing is done, so a BST built from already-sorted input degenerates into a straight line (O(n) operations) — this is exactly the problem AVL and Red-Black trees solve.",
@@ -413,8 +467,8 @@ while lo <= hi:
 };
 
 const SIDEBAR_STRUCTURE = [
-  {cat:"Sorting", items:["bubble","selection","insertion","merge","quick","heap","shell","cocktail"], open:true},
-  {cat:"Searching", items:["linear_search","binary_search","jump_search","exponential_search","interpolation_search","ternary_search"], open:true},
+  {cat:"Sorting", items:["bubble","selection","insertion","merge","quick","heap","shell","cocktail","comb","gnome","counting","odd_even"], open:true},
+  {cat:"Searching", items:["linear_search","binary_search","jump_search","exponential_search","interpolation_search","ternary_search","fibonacci_search"], open:true},
   {cat:"Arrays", items:["array_two_pointer","array_sliding_window","array_kadane","array_prefix_sum"], open:true},
   {cat:"Linked Lists", items:["ll_insert","ll_delete","ll_reverse","ll_cycle"], open:true},
   {cat:"Stack", items:["stack_balanced","stack_next_greater"], open:true},

@@ -189,4 +189,83 @@ function framesCocktail(arr){
   return frames;
 }
 
-export { framesBubble, framesSelection, framesInsertion, framesMerge, framesQuick, framesHeap, framesShell, framesCocktail };
+function framesComb(arr){
+  const a=[...arr], frames=[], n=a.length;
+  let gap=n, swapped=true;
+  frames.push({array:[...a], note:"Initial array.", pyLine:1});
+  while(gap>1 || swapped){
+    gap=Math.max(1,Math.floor(gap/1.3));
+    swapped=false;
+    frames.push({array:[...a], note:`Gap shrinks to ${gap}.`, pyLine:6});
+    for(let i=0;i+gap<n;i++){
+      frames.push({array:[...a], compare:[i,i+gap], note:`Compare a[${i}] and a[${i+gap}] (gap ${gap})`, pyLine:9});
+      if(a[i]>a[i+gap]){
+        [a[i],a[i+gap]]=[a[i+gap],a[i]]; swapped=true;
+        frames.push({array:[...a], swap:[i,i+gap], note:`Swap: a[${i}] > a[${i+gap}]`, pyLine:10});
+      }
+    }
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:12});
+  return frames;
+}
+
+function framesGnome(arr){
+  const a=[...arr], frames=[], n=a.length;
+  let i=0;
+  frames.push({array:[...a], note:"Initial array.", pyLine:1});
+  while(i<n){
+    if(i===0){ i++; continue; }
+    frames.push({array:[...a], compare:[i-1,i], note:`Compare a[${i-1}] and a[${i}]`, pyLine:4});
+    if(a[i]>=a[i-1]){ i++; }
+    else {
+      [a[i],a[i-1]]=[a[i-1],a[i]];
+      frames.push({array:[...a], swap:[i-1,i], note:`Swap: a[${i-1}] > a[${i}] — step back to index ${i-1}`, pyLine:7});
+      i--;
+    }
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:9});
+  return frames;
+}
+
+function framesCounting(arr){
+  const a=[...arr], frames=[], maxVal=Math.max(...a), count=new Array(maxVal+1).fill(0);
+  frames.push({array:[...a], note:`Initial array. Max value = ${maxVal}, so the count table has ${maxVal+1} slots.`, pyLine:2});
+  a.forEach((x,i)=>{
+    count[x]++;
+    frames.push({array:[...a], compare:[i], note:`Count a[${i}] = ${x}: count[${x}] is now ${count[x]}`, pyLine:5});
+  });
+  frames.push({array:[...a], note:`Counting done: ${count.map((c,v)=>c?`${v}×${c}`:null).filter(Boolean).join(', ')}`, pyLine:6});
+  let idx=0;
+  for(let v=0;v<=maxVal;v++){
+    while(count[v]>0){
+      a[idx]=v; count[v]--;
+      frames.push({array:[...a], swap:[idx], sorted:Array.from({length:idx},(_,k)=>k), note:`Write ${v} at index ${idx} (${count[v]} left of this value)`, pyLine:9});
+      idx++;
+    }
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:12});
+  return frames;
+}
+
+function framesOddEven(arr){
+  const a=[...arr], frames=[], n=a.length;
+  let isSorted=false;
+  frames.push({array:[...a], note:"Initial array.", pyLine:1});
+  while(!isSorted){
+    isSorted=true;
+    for(const start of [1,0]){
+      frames.push({array:[...a], note:`${start===1?'Odd':'Even'} phase: compare pairs starting at index ${start}.`, pyLine:6});
+      for(let i=start;i<n-1;i+=2){
+        frames.push({array:[...a], compare:[i,i+1], note:`Compare a[${i}] and a[${i+1}]`, pyLine:8});
+        if(a[i]>a[i+1]){
+          [a[i],a[i+1]]=[a[i+1],a[i]]; isSorted=false;
+          frames.push({array:[...a], swap:[i,i+1], note:`Swap: a[${i}] > a[${i+1}]`, pyLine:9});
+        }
+      }
+    }
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:11});
+  return frames;
+}
+
+export { framesBubble, framesSelection, framesInsertion, framesMerge, framesQuick, framesHeap, framesShell, framesCocktail, framesComb, framesGnome, framesCounting, framesOddEven };

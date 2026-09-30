@@ -35,6 +35,8 @@ Thanks for your interest in improving this project. By participating you agree t
 
 - Vanilla JavaScript with ES modules, no build step, no frameworks.
 - Match the surrounding formatting, naming, and quote style.
+- Icons come from Font Awesome (loaded from cdnjs in `index.html`); use `<i class="fa-solid fa-…">` instead of inline SVG.
+- Add `data-tip` (or `dataset.tip`) to any new visual element so the hover tooltip in `js/tooltip.js` can show its index and value.
 - Keep changes focused; do not reformat unrelated code.
 
 ## Pull Requests

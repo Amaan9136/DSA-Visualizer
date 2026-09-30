@@ -16,6 +16,7 @@ function renderStackFrame(frame){
       if(frame.resolved && frame.resolved.includes(i)) bg = 'var(--good)';
       bar.className = 'bar rounded-t-md relative flex items-end justify-center';
       bar.style.cssText = `width:${w}%; max-width:52px; height:${(Math.abs(val)/max*70)}%; background:${bg};`;
+      bar.dataset.tip = `Index ${i} · Value ${val}`;
       const label = document.createElement('span');
       label.className='font-mono text-[10px] pb-1'; label.style.color='#0b0d12'; label.textContent=val;
       bar.appendChild(label);
@@ -26,11 +27,12 @@ function renderStackFrame(frame){
     stackWrap.className = 'absolute right-4 bottom-4 flex flex-col-reverse gap-1 items-center';
     const stackLbl = document.createElement('div');
     stackLbl.className = 'text-[10px] font-mono mb-1'; stackLbl.style.color='var(--text-dim)'; stackLbl.textContent='stack (indices)';
-    (frame.stack||[]).forEach(idx=>{
+    (frame.stack||[]).forEach((idx,pos)=>{
       const cell = document.createElement('div');
       cell.className = 'glass2 rounded px-2 py-1 font-mono text-[11px]';
       cell.style.cssText = 'border:1px solid var(--accent2); min-width:36px; text-align:center;';
       cell.textContent = idx;
+      cell.dataset.tip = `Stack position ${pos} · Index ${idx} · Value ${arr[idx]}`;
       stackWrap.appendChild(cell);
     });
     stackWrap.appendChild(stackLbl);
@@ -47,6 +49,7 @@ function renderStackFrame(frame){
     cell.className = 'rounded-md flex items-center justify-center font-mono font-bold text-[16px]';
     cell.style.cssText = `width:44px; height:38px; background:${bg}; color:#0b0d12;`;
     cell.textContent = ch;
+    cell.dataset.tip = `Stack position ${i} · "${ch}"`;
     col.appendChild(cell);
   });
   if(stack.length===0){

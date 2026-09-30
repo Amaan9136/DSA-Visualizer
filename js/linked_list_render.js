@@ -52,6 +52,7 @@ function renderLinkedListFrame(frame){
     if(h.deleted===n.id) fill = 'var(--danger)';
     if(h.found===n.id) fill = 'var(--good)';
     const g = svgEl('g',{});
+    g.setAttribute('data-tip', `Index ${i} · Value ${n.val}${i===0?' · head':''}`);
     g.appendChild(svgEl('rect',{x:x-r,y:cy-r,width:r*2,height:r*2,rx:8,fill,stroke:'var(--border)','stroke-width':1.5}));
     const t = svgEl('text',{x:x,y:cy+4,'text-anchor':'middle','font-size':13,'font-family':'JetBrains Mono, monospace',fill:'#0b0d12','font-weight':700});
     t.textContent = n.val;

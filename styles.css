@@ -92,3 +92,7 @@ input[type=range]{accent-color:var(--accent2);}
 @media(pointer:coarse){
   .btn,.btn-primary{min-height:40px;}
 }
+.btn i,.btn-primary i{width:16px; text-align:center; font-size:14px;}
+.chart-tip{position:absolute; z-index:10; display:none; pointer-events:none; padding:4px 8px; border-radius:6px; background:var(--panel2); border:1px solid var(--accent2); color:var(--text); font-family:'JetBrains Mono',monospace; font-size:11px; white-space:nowrap; box-shadow:0 4px 12px rgba(0,0,0,.35);}
+[data-tip]{cursor:default;}
+.bar:hover{filter:brightness(1.15);}

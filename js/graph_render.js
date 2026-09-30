@@ -49,6 +49,7 @@ function renderGraphFrame(frame){
     if(visitedSet.has(n.id)){ fill='var(--accent2)'; textColor='#0b0d12'; }
     if(h.current===n.id){ fill='var(--warn)'; textColor='#0b0d12'; }
     const g = svgEl('g',{});
+    g.setAttribute('data-tip', `Node ${n.label}${h.dist && h.dist[n.id]!==undefined ? ' · Distance '+(h.dist[n.id]===Infinity?'∞':h.dist[n.id]) : ''}`);
     g.appendChild(svgEl('circle',{cx:p.px,cy:p.py,r:20,fill,stroke:'var(--border)','stroke-width':1.5}));
     const t = svgEl('text',{x:p.px,y:p.py+4,'text-anchor':'middle','font-size':12,'font-family':'JetBrains Mono, monospace',fill:textColor,'font-weight':700});
     t.textContent = n.label;
