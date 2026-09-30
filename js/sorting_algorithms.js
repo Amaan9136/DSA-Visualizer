@@ -137,4 +137,56 @@ function framesHeap(arr){
   return frames;
 }
 
-export { framesBubble, framesSelection, framesInsertion, framesMerge, framesQuick, framesHeap };
+function framesShell(arr){
+  const a=[...arr], frames=[], n=a.length;
+  frames.push({array:[...a], note:"Initial array.", pyLine:1});
+  for(let gap=Math.floor(n/2);gap>0;gap=Math.floor(gap/2)){
+    frames.push({array:[...a], note:`Gap = ${gap} — gapped insertion sort.`, pyLine:4});
+    for(let i=gap;i<n;i++){
+      const tmp=a[i]; let j=i;
+      frames.push({array:[...a], compare:[i], note:`Pick key = a[${i}] = ${tmp}`, pyLine:6});
+      while(j>=gap && a[j-gap]>tmp){
+        a[j]=a[j-gap];
+        frames.push({array:[...a], compare:[j-gap,j], note:`Shift a[${j-gap}] to index ${j} (gap ${gap})`, pyLine:9});
+        j-=gap;
+      }
+      a[j]=tmp;
+      frames.push({array:[...a], swap:[j], note:`Place ${tmp} at index ${j}`, pyLine:11});
+    }
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:13});
+  return frames;
+}
+
+function framesCocktail(arr){
+  const a=[...arr], frames=[], sortedIdx=[];
+  let lo=0, hi=a.length-1, swapped=true;
+  frames.push({array:[...a], note:"Initial array.", pyLine:1});
+  while(swapped && lo<hi){
+    swapped=false;
+    for(let i=lo;i<hi;i++){
+      frames.push({array:[...a], compare:[i,i+1], sorted:[...sortedIdx], note:`Forward: compare a[${i}] and a[${i+1}]`, pyLine:7});
+      if(a[i]>a[i+1]){
+        [a[i],a[i+1]]=[a[i+1],a[i]]; swapped=true;
+        frames.push({array:[...a], swap:[i,i+1], sorted:[...sortedIdx], note:`Swap: a[${i}] > a[${i+1}]`, pyLine:8});
+      }
+    }
+    sortedIdx.push(hi); hi--;
+    frames.push({array:[...a], sorted:[...sortedIdx], note:`Forward pass done — largest placed at index ${hi+1}.`, pyLine:10});
+    if(!swapped) break;
+    swapped=false;
+    for(let i=hi;i>lo;i--){
+      frames.push({array:[...a], compare:[i-1,i], sorted:[...sortedIdx], note:`Backward: compare a[${i-1}] and a[${i}]`, pyLine:15});
+      if(a[i-1]>a[i]){
+        [a[i-1],a[i]]=[a[i],a[i-1]]; swapped=true;
+        frames.push({array:[...a], swap:[i-1,i], sorted:[...sortedIdx], note:`Swap: a[${i-1}] > a[${i}]`, pyLine:16});
+      }
+    }
+    sortedIdx.push(lo); lo++;
+    frames.push({array:[...a], sorted:[...sortedIdx], note:`Backward pass done — smallest placed at index ${lo-1}.`, pyLine:18});
+  }
+  frames.push({array:[...a], sorted:a.map((_,k)=>k), note:"Sorted!", pyLine:19});
+  return frames;
+}
+
+export { framesBubble, framesSelection, framesInsertion, framesMerge, framesQuick, framesHeap, framesShell, framesCocktail };

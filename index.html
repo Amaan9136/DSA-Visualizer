@@ -17,7 +17,10 @@
 <div class="h-screen w-screen flex flex-col">
 
   <!-- HEADER -->
-  <header class="glass flex items-center gap-4 px-4 h-14 shrink-0 z-20">
+  <header class="app-header glass flex items-center gap-4 px-4 h-14 shrink-0 z-20">
+    <button id="btnMenu" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0 hide-lg" title="Algorithms">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
     <div class="flex items-center gap-2 shrink-0">
       <div class="w-7 h-7 rounded-lg flex items-center justify-center font-display font-bold text-[15px]"
            style="background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#0b0d12;">A</div>
@@ -33,6 +36,10 @@
 
     <div class="flex-1"></div>
 
+    <a href="https://github.com/Amaan9136" target="_blank" rel="noopener" class="credit shrink-0 text-[12px]"><span class="credit-long">Built by </span><span class="credit-short">by </span>Amaan MK</a>
+    <button id="btnPanel" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0 hide-xl" title="Details">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+    </button>
     <button id="themeToggle" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0" title="Toggle theme">
       <svg id="iconMoon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
     </button>
@@ -44,13 +51,18 @@
   <div class="flex flex-1 min-h-0">
 
     <!-- SIDEBAR -->
-    <aside class="glass w-60 shrink-0 overflow-y-auto py-3 hidden lg:block" id="sidebar"></aside>
+    <div id="navDrawer" class="nav-drawer">
+      <div class="drawer-search">
+        <input id="searchInputMobile" placeholder="Search algorithms…" autocomplete="off" class="w-full glass2 rounded-lg px-3 py-1.5 text-[13px] outline-none focus:border-[var(--accent2)]" style="border:1px solid var(--border)"/>
+      </div>
+      <aside class="glass w-60 shrink-0 overflow-y-auto py-3 hidden lg:block" id="sidebar"></aside>
+    </div>
 
     <!-- MAIN -->
     <main class="flex-1 min-w-0 flex flex-col">
 
       <!-- Visualization area -->
-      <section class="flex-1 min-h-0 flex flex-col p-4 gap-3">
+      <section class="main-section flex-1 min-h-0 flex flex-col p-4 gap-3">
 
         <div class="flex items-center justify-between flex-wrap gap-2">
           <div>
@@ -58,11 +70,12 @@
             <p id="algoSub" class="text-[12px]" style="color:var(--text-dim)">Sorting · comparison-based</p>
           </div>
           <div class="flex items-center gap-2 text-[12px]" style="color:var(--text-dim)">
+            <button id="btnViewIter" class="btn rounded-md px-2.5 py-1.5 text-[12px]">View Iteration</button>
             <span id="frameCounter">Step 0 / 0</span>
           </div>
         </div>
 
-        <div class="glass rounded-xl flex-1 min-h-0 relative overflow-hidden">
+        <div class="viz-box glass rounded-xl flex-1 min-h-0 relative overflow-hidden">
           <div id="canvasWrap" class="absolute inset-0 flex items-end justify-center gap-1 px-6 pb-6 pt-10"></div>
           <div id="stepNote" class="absolute top-3 left-4 right-4 text-[12.5px] font-mono glass2 rounded-lg px-3 py-1.5 fade-in" style="color:var(--text-dim); display:none"></div>
         </div>
@@ -117,7 +130,7 @@
     </main>
 
     <!-- RIGHT PANEL -->
-    <aside class="glass w-[400px] shrink-0 hidden xl:flex flex-col min-h-0">
+    <aside id="rightPanel" class="glass w-[400px] shrink-0 hidden xl:flex flex-col min-h-0">
       <div class="flex text-[13px] shrink-0 overflow-x-auto" id="tabBar">
         <div class="tab active px-3 py-2.5 shrink-0" data-tab="explain">Explanation</div>
         <div class="tab px-3 py-2.5 shrink-0" data-tab="iteration">Iteration</div>
@@ -145,6 +158,22 @@
         <div id="tab-complexity" class="p-4 text-[13px] leading-relaxed hidden"></div>
       </div>
     </aside>
+  </div>
+</div>
+
+<div id="drawerBackdrop" class="drawer-backdrop"></div>
+
+<div id="iterModal" class="iter-modal">
+  <div class="iter-modal-card glass rounded-xl">
+    <div class="iter-modal-head">
+      <div class="flex-1 min-w-0">
+        <div class="font-display font-bold text-[15px]">Iteration Steps</div>
+        <div id="iterModalMeta" class="text-[11px] font-mono" style="color:var(--text-dim)"></div>
+      </div>
+      <button id="btnIterBreakdown" class="btn rounded-md px-2.5 py-1.5 text-[12px]">Breakdown: Off</button>
+      <button id="btnIterClose" class="btn rounded-md px-2.5 py-1.5 text-[12px]" title="Close">✕</button>
+    </div>
+    <div id="iterModalList" class="iter-modal-body"></div>
   </div>
 </div>
 

@@ -549,7 +549,73 @@ def binary_search_range(arr, target, lo, hi):
             lo = mid + 1
         else:
             hi = mid - 1
-    return -1  # not found`
+    return -1  # not found`,
+
+shell:`def shell_sort(arr):
+    n = len(arr)
+    gap = n // 2
+    while gap > 0:
+        for i in range(gap, n):
+            tmp = arr[i]
+            j = i
+            while j >= gap and arr[j - gap] > tmp:
+                arr[j] = arr[j - gap]
+                j -= gap
+            arr[j] = tmp
+        gap //= 2
+    return arr`,
+
+cocktail:`def cocktail_shaker_sort(arr):
+    lo, hi = 0, len(arr) - 1
+    swapped = True
+    while swapped and lo < hi:
+        swapped = False
+        for i in range(lo, hi):
+            if arr[i] > arr[i + 1]:
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                swapped = True
+        hi -= 1
+        if not swapped:
+            break
+        swapped = False
+        for i in range(hi, lo, -1):
+            if arr[i - 1] > arr[i]:
+                arr[i - 1], arr[i] = arr[i], arr[i - 1]
+                swapped = True
+        lo += 1
+    return arr`,
+
+interpolation_search:`def interpolation_search(arr, target):
+    lo, hi = 0, len(arr) - 1
+    while lo <= hi and arr[lo] <= target <= arr[hi]:
+        if arr[hi] == arr[lo]:
+            pos = lo
+        else:
+            pos = lo + (target - arr[lo]) * (hi - lo) // (arr[hi] - arr[lo])
+        if arr[pos] == target:
+            return pos
+        elif arr[pos] < target:
+            lo = pos + 1
+        else:
+            hi = pos - 1
+    return -1`,
+
+ternary_search:`def ternary_search(arr, target):
+    lo, hi = 0, len(arr) - 1
+    while lo <= hi:
+        third = (hi - lo) // 3
+        m1, m2 = lo + third, hi - third
+        if arr[m1] == target:
+            return m1
+        if arr[m2] == target:
+            return m2
+        if target < arr[m1]:
+            hi = m1 - 1
+        elif target > arr[m2]:
+            lo = m2 + 1
+        else:
+            lo, hi = m1 + 1, m2 - 1
+    return -1`
 };
 
 export { PY };

@@ -4,8 +4,8 @@ import { framesBFS, framesDFS, framesDijkstra, framesKruskal } from './graph_alg
 import { framesHashTable, parseHashOpsString } from './hash_table_algorithms.js';
 import { framesLLCycleDetect, framesLLDelete, framesLLInsert, framesLLReverse } from './linked_list_algorithms.js';
 import { framesCircularQueue, framesQueueFIFO, parseOpsString } from './queue_algorithms.js';
-import { framesBinarySearch, framesExponentialSearch, framesJumpSearch, framesLinearSearch } from './searching_algorithms.js';
-import { framesBubble, framesHeap, framesInsertion, framesMerge, framesQuick, framesSelection } from './sorting_algorithms.js';
+import { framesBinarySearch, framesExponentialSearch, framesInterpolationSearch, framesJumpSearch, framesLinearSearch, framesTernarySearch } from './searching_algorithms.js';
+import { framesBubble, framesCocktail, framesHeap, framesInsertion, framesMerge, framesQuick, framesSelection, framesShell } from './sorting_algorithms.js';
 import { framesBalancedParens, framesNextGreaterElement } from './stack_algorithms.js';
 import { framesAVLInsert, framesBSTBuild, framesBSTDelete, framesBSTSearch, framesTraversal } from './tree_algorithms.js';
 
@@ -217,6 +217,28 @@ for i in n-1..1:
   heapify(a, i, 0)`,
     complexity:{best:"O(n log n)",avg:"O(n log n)",worst:"O(n log n)",space:"O(1)",stable:"No"}},
 
+  shell:{ name:"Shell Sort", cat:"Sorting", frames:framesShell,
+    explain:"A generalization of insertion sort that first compares and moves elements far apart, then progressively shrinks the gap down to 1. Early large-gap passes move out-of-place elements close to their final position quickly, so the final gap-1 pass (a plain insertion sort) has very little left to do.",
+    pseudo:`gap = n // 2
+while gap > 0:
+  for i in gap..n-1:
+    tmp = a[i]; j = i
+    while j >= gap and a[j-gap] > tmp:
+      a[j] = a[j-gap]; j -= gap
+    a[j] = tmp
+  gap //= 2`,
+    complexity:{best:"O(n log n)",avg:"Depends on gap sequence — about O(n^1.3) to O(n²)",worst:"O(n²) with the simple n/2 sequence",space:"O(1)",stable:"No"}},
+
+  cocktail:{ name:"Cocktail Shaker Sort", cat:"Sorting", frames:framesCocktail,
+    explain:"A bidirectional bubble sort. Each round has a forward pass that pushes the largest remaining value to the right end, followed by a backward pass that pulls the smallest remaining value to the left end. It handles small values sitting near the end of the array better than plain bubble sort, and stops as soon as a pass makes no swaps.",
+    pseudo:`lo, hi = 0, n-1
+while swapped and lo < hi:
+  for i in lo..hi-1: if a[i] > a[i+1]: swap
+  hi -= 1
+  for i in hi..lo+1: if a[i-1] > a[i]: swap
+  lo += 1`,
+    complexity:{best:"O(n) — already sorted",avg:"O(n²)",worst:"O(n²)",space:"O(1)",stable:"Yes"}},
+
   linear_search:{ name:"Linear Search", cat:"Searching", needsTarget:true, frames:(arr,target)=>framesLinearSearch(arr,target),
     explain:"Checks every element in order until it finds the target or reaches the end. Makes no assumptions about the data — works on unsorted arrays — but in the worst case has to look at everything.",
     pseudo:`for i in 0..n-1:
@@ -250,6 +272,28 @@ linear scan the identified block`,
 while a[i] <= target: i *= 2
 binary_search(a, target, i/2, min(i,n-1))`,
     complexity:{best:"O(1)",avg:"O(log n)",worst:"O(log n)",space:"O(1)",stable:"—"}},
+
+  interpolation_search:{ name:"Interpolation Search", cat:"Searching", needsTarget:true, frames:(arr,target)=>framesInterpolationSearch(arr,target),
+    explain:"Requires a sorted array. Instead of always probing the middle like binary search, it estimates where the target should be by interpolating between the values at both ends of the current range — the way a person opens a phone book near the back when looking for a name starting with W. Very fast on uniformly distributed data, but can degrade badly on skewed data.",
+    pseudo:`lo, hi = 0, n-1
+while lo <= hi and a[lo] <= target <= a[hi]:
+  pos = lo + (target - a[lo]) * (hi - lo) / (a[hi] - a[lo])
+  if a[pos] == target: return pos
+  elif a[pos] < target: lo = pos + 1
+  else: hi = pos - 1`,
+    complexity:{best:"O(1)",avg:"O(log log n) — uniformly distributed data",worst:"O(n) — highly skewed data",space:"O(1)",stable:"—"}},
+
+  ternary_search:{ name:"Ternary Search", cat:"Searching", needsTarget:true, frames:(arr,target)=>framesTernarySearch(arr,target),
+    explain:"Requires a sorted array. Splits the current range into three parts using two midpoints, compares the target against both, and discards the two thirds that cannot contain it. It makes more comparisons per step than binary search, so it is mainly of educational interest for sorted lists, and is more useful for finding the peak of unimodal functions.",
+    pseudo:`lo, hi = 0, n-1
+while lo <= hi:
+  m1 = lo + (hi-lo)/3; m2 = hi - (hi-lo)/3
+  if a[m1] == target: return m1
+  if a[m2] == target: return m2
+  if target < a[m1]: hi = m1 - 1
+  elif target > a[m2]: lo = m2 + 1
+  else: lo, hi = m1 + 1, m2 - 1`,
+    complexity:{best:"O(1)",avg:"O(log₃ n)",worst:"O(log₃ n)",space:"O(1)",stable:"—"}},
 
   bst_build:{ name:"BST — Build (Insert)", cat:"Trees", renderMode:"tree", frames:(arr)=>framesBSTBuild(arr),
     explain:"A Binary Search Tree keeps every node's left subtree smaller and right subtree larger. Inserting a new value means walking down from the root, going left or right based on comparisons, until an empty spot is found. No rebalancing is done, so a BST built from already-sorted input degenerates into a straight line (O(n) operations) — this is exactly the problem AVL and Red-Black trees solve.",
@@ -369,8 +413,8 @@ binary_search(a, target, i/2, min(i,n-1))`,
 };
 
 const SIDEBAR_STRUCTURE = [
-  {cat:"Sorting", items:["bubble","selection","insertion","merge","quick","heap"], open:true},
-  {cat:"Searching", items:["linear_search","binary_search","jump_search","exponential_search"], open:true},
+  {cat:"Sorting", items:["bubble","selection","insertion","merge","quick","heap","shell","cocktail"], open:true},
+  {cat:"Searching", items:["linear_search","binary_search","jump_search","exponential_search","interpolation_search","ternary_search"], open:true},
   {cat:"Arrays", items:["array_two_pointer","array_sliding_window","array_kadane","array_prefix_sum"], open:true},
   {cat:"Linked Lists", items:["ll_insert","ll_delete","ll_reverse","ll_cycle"], open:true},
   {cat:"Stack", items:["stack_balanced","stack_next_greater"], open:true},

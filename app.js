@@ -57,6 +57,20 @@ document.getElementById('btnCustomApply').onclick = ()=>{
   rebuildFrames();
 };
 
+/* ============================= DRAWERS ============================= */
+const closeDrawers = ()=>['navDrawer','rightPanel','drawerBackdrop'].forEach(id=>document.getElementById(id).classList.remove('open'));
+[['btnMenu','navDrawer'],['btnPanel','rightPanel']].forEach(([b,t])=>{
+  document.getElementById(b).onclick = ()=>{
+    const open = !document.getElementById(t).classList.contains('open');
+    closeDrawers();
+    document.getElementById(t).classList.toggle('open', open);
+    document.getElementById('drawerBackdrop').classList.toggle('open', open);
+  };
+});
+document.getElementById('drawerBackdrop').onclick = closeDrawers;
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawers(); });
+['(min-width:1024px)','(min-width:1280px)'].forEach(q=>matchMedia(q).onchange = closeDrawers);
+
 /* ============================= INIT ============================= */
 renderSidebar();
 renderPanelContent();

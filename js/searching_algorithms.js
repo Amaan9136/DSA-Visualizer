@@ -82,4 +82,52 @@ function framesExponentialSearch(arrIn, target){
   return frames;
 }
 
-export { framesLinearSearch, framesBinarySearch, framesJumpSearch, framesExponentialSearch };
+function framesInterpolationSearch(arrIn, target){
+  const arr=[...arrIn].sort((a,b)=>a-b);
+  const frames=[];
+  frames.push({array:[...arr], note:`Array sorted. Estimate where target = ${target} sits by interpolating between the range ends.`, pyLine:1});
+  let lo=0, hi=arr.length-1;
+  while(lo<=hi && target>=arr[lo] && target<=arr[hi]){
+    const pos = arr[hi]===arr[lo] ? lo : lo+Math.floor((target-arr[lo])*(hi-lo)/(arr[hi]-arr[lo]));
+    frames.push({array:[...arr], range:[lo,hi], compare:[pos], note:`Range [${lo}..${hi}]. Estimated position ${pos}: a[${pos}]=${arr[pos]}`, pyLine:7});
+    if(arr[pos]===target){
+      frames.push({array:[...arr], found:[pos], note:`Found ${target} at index ${pos}!`, pyLine:9});
+      return frames;
+    } else if(arr[pos]<target){
+      lo=pos+1;
+      frames.push({array:[...arr], range:[lo,hi], note:`a[${pos}]=${arr[pos]} < ${target} — search right of index ${pos}`, pyLine:11});
+    } else {
+      hi=pos-1;
+      frames.push({array:[...arr], range:[lo,hi], note:`a[${pos}]=${arr[pos]} > ${target} — search left of index ${pos}`, pyLine:13});
+    }
+  }
+  frames.push({array:[...arr], note:`Target ${target} not found.`, pyLine:14});
+  return frames;
+}
+
+function framesTernarySearch(arrIn, target){
+  const arr=[...arrIn].sort((a,b)=>a-b);
+  const frames=[];
+  frames.push({array:[...arr], note:`Array sorted. Split the range into three parts using two midpoints. Searching for target = ${target}.`, pyLine:1});
+  let lo=0, hi=arr.length-1;
+  while(lo<=hi){
+    const third=Math.floor((hi-lo)/3), m1=lo+third, m2=hi-third;
+    frames.push({array:[...arr], range:[lo,hi], compare:[m1,m2], note:`Range [${lo}..${hi}]. Check a[${m1}]=${arr[m1]} and a[${m2}]=${arr[m2]}`, pyLine:5});
+    if(arr[m1]===target){ frames.push({array:[...arr], found:[m1], note:`Found ${target} at index ${m1}!`, pyLine:7}); return frames; }
+    if(arr[m2]===target){ frames.push({array:[...arr], found:[m2], note:`Found ${target} at index ${m2}!`, pyLine:9}); return frames; }
+    if(target<arr[m1]){
+      hi=m1-1;
+      frames.push({array:[...arr], range:[lo,hi], note:`${target} < a[${m1}] — search the left third`, pyLine:11});
+    } else if(target>arr[m2]){
+      lo=m2+1;
+      frames.push({array:[...arr], range:[lo,hi], note:`${target} > a[${m2}] — search the right third`, pyLine:13});
+    } else {
+      lo=m1+1; hi=m2-1;
+      frames.push({array:[...arr], range:[lo,hi], note:`${target} lies between a[${m1}] and a[${m2}] — search the middle third`, pyLine:15});
+    }
+  }
+  frames.push({array:[...arr], note:`Target ${target} not found.`, pyLine:16});
+  return frames;
+}
+
+export { framesLinearSearch, framesBinarySearch, framesJumpSearch, framesExponentialSearch, framesInterpolationSearch, framesTernarySearch };

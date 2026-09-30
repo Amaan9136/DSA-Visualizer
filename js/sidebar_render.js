@@ -28,11 +28,11 @@ function renderSidebar(filter=''){
       const d = document.createElement('div');
       d.className = 'nav-item px-3 py-1.5 text-[13px]' + (key===state.currentAlgo?' active':'');
       d.textContent = CATALOG[key].name;
-      d.onclick = ()=> selectAlgo(key);
+      d.onclick = ()=>{ selectAlgo(key); ['navDrawer','drawerBackdrop'].forEach(id=>document.getElementById(id).classList.remove('open')); };
       el.appendChild(d);
     });
   });
 }
-document.getElementById('searchInput').oninput = (e)=> renderSidebar(e.target.value);
+['searchInput','searchInputMobile'].forEach(id=>{ document.getElementById(id).oninput = (e)=>{ ['searchInput','searchInputMobile'].forEach(k=>document.getElementById(k).value = e.target.value); renderSidebar(e.target.value); }; });
 
 export { renderSidebar };
