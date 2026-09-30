@@ -58,3 +58,8 @@ A chronological record of the development and changes made to DSA Visualizer.
   * **Sorting**: Comb Sort, Gnome Sort, Counting Sort, Odd-Even Sort.
   * **Searching**: Fibonacci Search.
 * Updated `README.md` (algorithm count and tables, tooltip feature, Font Awesome) and `CONTRIBUTING.md` (icon and `data-tip` guidelines).
+
+### Button Tooltips & Fine-Grained Speed Control
+* Added hover/focus tooltips to all icon-only buttons (menu, details, theme, GitHub, reset, previous, next, modal close) using `data-tip`, styled in `styles.css`.
+* Replaced the 1-10 speed slider with a wider 0.05x-4x slider and a synced numeric input for custom multipliers, defaulting to 1x (`js/playback_controls.js`, `index.html`).
+* Updated `README.md` for the new speed range and button tooltips.

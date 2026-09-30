@@ -20,8 +20,7 @@ function play(){
   switchToIterationTab();
   document.getElementById('playIcon').className = 'fa-solid fa-pause';
   document.getElementById('playLabel').textContent = 'Pause';
-  const speed = document.getElementById('speedSlider').value;
-  const delay = 850 - speed*75;
+  const delay = 400/document.getElementById('speedInput').value;
   state.timer = setInterval(()=>{
     if(state.idx>=state.frames.length-1){ pause(); return; }
     stepNext();
@@ -38,6 +37,11 @@ document.getElementById('btnPlay').onclick = ()=> state.playing ? pause() : play
 document.getElementById('btnNext').onclick = ()=>{ pause(); stepNext(); };
 document.getElementById('btnPrev').onclick = stepPrev;
 document.getElementById('btnReset').onclick = ()=>{ pause(); rebuildFrames(); };
-document.getElementById('speedSlider').oninput = ()=>{ if(state.playing){ pause(); play(); } };
+const setSpeed = (v)=>{
+  document.getElementById('speedInput').value = document.getElementById('speedSlider').value = Math.min(4, Math.max(0.05, parseFloat(v)||1));
+  if(state.playing){ pause(); play(); }
+};
+document.getElementById('speedSlider').oninput = ()=> setSpeed(document.getElementById('speedSlider').value);
+document.getElementById('speedInput').onchange = ()=> setSpeed(document.getElementById('speedInput').value);
 
 export { goTo, stepNext, stepPrev, play, pause };

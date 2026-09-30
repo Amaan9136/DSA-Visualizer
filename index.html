@@ -19,7 +19,7 @@
 
   <!-- HEADER -->
   <header class="app-header glass flex items-center gap-4 px-4 h-14 shrink-0 z-20">
-    <button id="btnMenu" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0 hide-lg" title="Algorithms">
+    <button id="btnMenu" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0 hide-lg" data-tip="Algorithms">
       <i class="fa-solid fa-bars"></i>
     </button>
     <div class="flex items-center gap-2 shrink-0">
@@ -38,13 +38,13 @@
     <div class="flex-1"></div>
 
     <a href="https://github.com/Amaan9136" target="_blank" rel="noopener" class="credit shrink-0 text-[12px]"><span class="credit-long">Built by </span><span class="credit-short">by </span>Amaan MK</a>
-    <button id="btnPanel" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0 hide-xl" title="Details">
+    <button id="btnPanel" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0 hide-xl" data-tip="Details">
       <i class="fa-solid fa-file-lines"></i>
     </button>
-    <button id="themeToggle" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0" title="Toggle theme">
+    <button id="themeToggle" class="btn rounded-lg w-9 h-9 flex items-center justify-center shrink-0" data-tip="Toggle theme">
       <i id="iconMoon" class="fa-solid fa-moon"></i>
     </button>
-    <a href="https://github.com/Amaan9136/DSA-Visualizer" target="_blank" class="btn rounded-lg w-9 h-9 hidden sm:flex items-center justify-center shrink-0" title="GitHub">
+    <a href="https://github.com/Amaan9136/DSA-Visualizer" target="_blank" class="btn rounded-lg w-9 h-9 hidden sm:flex items-center justify-center shrink-0" data-tip="GitHub">
       <i class="fa-brands fa-github"></i>
     </a>
   </header>
@@ -85,17 +85,19 @@
         <!-- CONTROLS -->
         <div class="glass rounded-xl p-3 flex flex-col gap-2.5">
           <div class="flex items-center gap-2 flex-wrap">
-            <button id="btnReset" class="btn rounded-md px-2.5 py-1.5" title="Reset"><i class="fa-solid fa-arrows-rotate"></i></button>
-            <button id="btnPrev" class="btn rounded-md px-2.5 py-1.5" title="Previous step"><i class="fa-solid fa-angles-left"></i></button>
+            <button id="btnReset" class="btn rounded-md px-2.5 py-1.5" data-tip="Reset"><i class="fa-solid fa-arrows-rotate"></i></button>
+            <button id="btnPrev" class="btn rounded-md px-2.5 py-1.5" data-tip="Previous step"><i class="fa-solid fa-angles-left"></i></button>
             <button id="btnPlay" class="btn-primary rounded-md px-4 py-1.5 font-semibold flex items-center gap-1.5">
               <i id="playIcon" class="fa-solid fa-play"></i>
               <span id="playLabel">Play</span>
             </button>
-            <button id="btnNext" class="btn rounded-md px-2.5 py-1.5" title="Next step"><i class="fa-solid fa-angles-right"></i></button>
+            <button id="btnNext" class="btn rounded-md px-2.5 py-1.5" data-tip="Next step"><i class="fa-solid fa-angles-right"></i></button>
 
             <div class="flex items-center gap-2 ml-1">
               <span class="text-[11px]" style="color:var(--text-dim)">Speed</span>
-              <input id="speedSlider" type="range" min="1" max="10" value="6" class="w-20 h-1">
+              <input id="speedSlider" type="range" min="0.05" max="4" step="0.05" value="1" class="w-32 h-1">
+              <input id="speedInput" type="number" min="0.05" max="4" step="0.05" value="1" class="w-20 glass2 rounded-md px-2 py-1 text-[12px] font-mono outline-none focus:border-[var(--accent2)]" style="border:1px solid var(--border)"/>
+              <span class="text-[11px]" style="color:var(--text-dim)">x</span>
             </div>
 
             <div class="flex-1"></div>
@@ -173,7 +175,7 @@
         <div id="iterModalMeta" class="text-[11px] font-mono" style="color:var(--text-dim)"></div>
       </div>
       <button id="btnIterBreakdown" class="btn rounded-md px-2.5 py-1.5 text-[12px]">Breakdown: Off</button>
-      <button id="btnIterClose" class="btn rounded-md px-2.5 py-1.5 text-[12px]" title="Close"><i class="fa-solid fa-xmark"></i></button>
+      <button id="btnIterClose" class="btn rounded-md px-2.5 py-1.5 text-[12px]" data-tip="Close"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <div id="iterModalList" class="iter-modal-body"></div>
   </div>
