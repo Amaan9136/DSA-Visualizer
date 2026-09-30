@@ -47,3 +47,14 @@ A chronological record of the development and changes made to DSA Visualizer.
 * Improved layout responsiveness for smaller screen viewports and mobile navigation.
 * Expanded algorithm catalog coverage across foundational modules.
 * Added standard community and open-source project documentation (`CONTRIBUTING.md`, issue templates, and conduct guidelines).
+
+### Hover Tooltips, Font Awesome Icons & New Algorithms
+* Added hover/tap tooltips showing the index and value of the hovered element across all visualizations ([`74c1393`](https://github.com/Amaan9136/DSA-Visualizer/commit/74c1393c0777c6a774fac2c1582e0ecd24fcd7ae)):
+  * New `js/tooltip.js` module and a tooltip element in `index.html`, refreshed on every frame so it stays accurate during playback.
+  * Bars (`Index 3 · Value 17`), prefix-sum cells, tree nodes, graph nodes (with Dijkstra distance), linked-list nodes, stack cells and stack index chips, queue and circular-queue slots, and hash-table buckets and chain entries.
+  * Tooltip styling added to `styles.css`.
+* Replaced all inline SVG icons (menu, search, details, theme, GitHub, reset, previous, play, next) and the modal close glyph with Font Awesome 6.5.2 from cdnjs; the play button now toggles between `fa-play` and `fa-pause`.
+* Added 5 algorithms, bringing the total from 39 to 44, each with step frames, Python source, explanation, pseudocode, and complexity:
+  * **Sorting**: Comb Sort, Gnome Sort, Counting Sort, Odd-Even Sort.
+  * **Searching**: Fibonacci Search.
+* Updated `README.md` (algorithm count and tables, tooltip feature, Font Awesome) and `CONTRIBUTING.md` (icon and `data-tip` guidelines).
