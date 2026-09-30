@@ -20,7 +20,7 @@ function play(){
   switchToIterationTab();
   document.getElementById('playIcon').className = 'fa-solid fa-pause';
   document.getElementById('playLabel').textContent = 'Pause';
-  const delay = document.getElementById('speedSlider').value*1000;
+  const delay = 1000/document.getElementById('speedSlider').value;
   state.timer = setInterval(()=>{
     if(state.idx>=state.frames.length-1){ pause(); return; }
     stepNext();

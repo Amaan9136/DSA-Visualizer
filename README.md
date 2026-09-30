@@ -34,7 +34,7 @@ Interactive visualizations of algorithms and data structures to help students an
 
 ## Usage
 
-- **Sorting**: Generate a random array or enter custom values, then press Play to visualize the sorting process. Adjust the step delay between 0.01s and 10s to slow down or speed up the animation.
+- **Sorting**: Generate a random array or enter custom values, then press Play to visualize the sorting process. Adjust the playback speed between 0.01x and 4x to slow down or speed up the animation.
 - **Graphs**: Create a new random graph, set a start node, and run search algorithms to see traversal in action.
 
 ## Implemented Algorithms
